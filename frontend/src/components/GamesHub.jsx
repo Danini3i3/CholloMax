@@ -12,6 +12,11 @@ export default function GamesHub() {
 
       <div className="games-grid">
         <article className="panel game-card">
+          <img
+            alt="Miniatura ruleta"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80"
+          />
           <span className="sale-tag">LUCK</span>
           <h3>Ruleta Epica</h3>
           <p>Premios instantaneos: puntos, descuentos y envio gratis.</p>
@@ -21,6 +26,11 @@ export default function GamesHub() {
         </article>
 
         <article className="panel game-card game-card--runner">
+          <img
+            alt="Miniatura caida de chollos"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80"
+          />
           <span className="sale-tag">SKILL</span>
           <h3>Caida de Chollos</h3>
           <p>Esquiva bombas, recoge descuentos y suma puntos por reflejos.</p>
@@ -30,6 +40,11 @@ export default function GamesHub() {
         </article>
 
         <article className="panel game-card game-card--throw">
+          <img
+            alt="Miniatura lanzamiento"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1461896836934-ffe607ba8211?auto=format&fit=crop&w=900&q=80"
+          />
           <span className="sale-tag">DISTANCE</span>
           <h3>Lanzamiento Extremo</h3>
           <p>Lanza objetos lo mas lejos posible. Mayor distancia = mas puntos.</p>
@@ -39,6 +54,11 @@ export default function GamesHub() {
         </article>
 
         <article className="panel game-card game-card--runner">
+          <img
+            alt="Miniatura reaction rush"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1550745165-9bc0b252726f?auto=format&fit=crop&w=900&q=80"
+          />
           <span className="sale-tag">REFLEX</span>
           <h3>Reaction Rush</h3>
           <p>Toca objetivos al vuelo durante 20 segundos para acumular puntos.</p>
@@ -48,6 +68,11 @@ export default function GamesHub() {
         </article>
 
         <article className="panel game-card">
+          <img
+            alt="Miniatura memory flip"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1614851099511-773084f6911d?auto=format&fit=crop&w=900&q=80"
+          />
           <span className="sale-tag">BRAIN</span>
           <h3>Memory Flip</h3>
           <p>Encuentra parejas. Menos movimientos = mas recompensa.</p>

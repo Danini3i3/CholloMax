@@ -853,6 +853,15 @@ input {
   position: relative;
 }
 
+.game-thumb {
+  border-radius: 10px;
+  height: 120px;
+  margin-bottom: 4px;
+  object-fit: cover;
+  opacity: 0.86;
+  width: 100%;
+}
+
 .game-card--runner {
   background: linear-gradient(160deg, rgba(16, 44, 74, 0.95), rgba(11, 23, 44, 0.95));
 }

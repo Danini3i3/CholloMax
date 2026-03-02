@@ -21,6 +21,9 @@ CORS(app)
 JWT_SECRET = os.getenv("JWT_SECRET", "change-me-in-production")
 PORT = int(os.getenv("PORT", "5000"))
 
+# Ensure SQLite schema exists for both local run and serverless runtime.
+init_db()
+
 
 def now_str():
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")

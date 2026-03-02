@@ -1,7 +1,11 @@
 import sqlite3
+import os
 from pathlib import Path
 
-DB_PATH = Path(__file__).parent / "chollomax.db"
+if os.getenv("VERCEL"):
+    DB_PATH = Path("/tmp/chollomax.db")
+else:
+    DB_PATH = Path(__file__).parent / "chollomax.db"
 
 
 def get_connection():
