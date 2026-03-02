@@ -8,6 +8,7 @@ import Cart from './components/Cart';
 import Profile from './components/Profile';
 import Game from './components/Game';
 import PointsHub from './components/PointsHub';
+import MyOrders from './components/MyOrders';
 import { clearToken, getToken } from './lib/session';
 
 const navClassName = ({ isActive }) => `top-nav__link${isActive ? ' top-nav__link--active' : ''}`;
@@ -49,6 +50,9 @@ function App() {
           </NavLink>
           {token ? (
             <>
+              <NavLink className={navClassName} to="/orders">
+                Mis pedidos
+              </NavLink>
               <NavLink className={navClassName} to="/profile">
                 Perfil
               </NavLink>
@@ -75,6 +79,7 @@ function App() {
           <Route path="/register" element={<Register />} />
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/cart" element={<Cart />} />
+          <Route path="/orders" element={<MyOrders />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/game" element={<Game />} />
           <Route path="/points" element={<PointsHub />} />

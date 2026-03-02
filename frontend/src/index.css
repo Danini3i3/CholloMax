@@ -489,6 +489,62 @@ input {
   justify-content: space-between;
 }
 
+.orders-list {
+  display: grid;
+  gap: 12px;
+}
+
+.order-card {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  display: grid;
+  gap: 12px;
+  padding: 12px;
+}
+
+.order-card__head {
+  align-items: center;
+  display: flex;
+  gap: 10px;
+  justify-content: space-between;
+}
+
+.order-card__head p {
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.order-meta {
+  align-items: flex-end;
+  display: grid;
+  gap: 5px;
+  justify-items: end;
+}
+
+.order-items {
+  display: grid;
+  gap: 8px;
+}
+
+.order-item {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 10px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 58px 1fr;
+  padding: 8px;
+}
+
+.order-item img {
+  border-radius: 8px;
+  height: 52px;
+  object-fit: cover;
+  width: 100%;
+}
+
 .profile-panel {
   margin: 0 auto;
   max-width: 680px;
@@ -507,9 +563,47 @@ input {
   gap: 16px;
 }
 
+.points-hub--temu {
+  position: relative;
+}
+
 .points-hero strong {
   color: #ffd282;
   font-size: 1.2em;
+}
+
+.points-hero--temu {
+  background:
+    radial-gradient(circle at 20% 20%, rgba(255, 210, 130, 0.32), transparent 34%),
+    linear-gradient(130deg, #a50922, #ff3d0a 58%, #ff7d1a);
+  border-color: rgba(255, 230, 191, 0.5);
+  color: #fff6eb;
+  overflow: hidden;
+  position: relative;
+}
+
+.points-hero--temu::after {
+  animation: scan 5s linear infinite;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.24), transparent);
+  content: '';
+  inset: 0;
+  position: absolute;
+  transform: translateX(-60%);
+}
+
+.points-marquee {
+  animation: ticker 11s linear infinite;
+  color: #ffe9c1;
+  display: flex;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  gap: 22px;
+  letter-spacing: 0.06em;
+  white-space: nowrap;
+}
+
+.points-grid--temu {
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
 }
 
 .points-grid {
@@ -520,6 +614,35 @@ input {
 
 .points-card h3 {
   margin-bottom: 4px;
+}
+
+.points-card--temu {
+  background:
+    radial-gradient(circle at 88% 8%, rgba(255, 210, 130, 0.2), transparent 40%),
+    linear-gradient(180deg, #2a0a17, #1f0b1f);
+  border-color: rgba(255, 85, 85, 0.45);
+  box-shadow: 0 16px 34px rgba(0, 0, 0, 0.35);
+  position: relative;
+}
+
+.points-card--spend {
+  border-color: rgba(255, 214, 130, 0.4);
+}
+
+.temu-burst {
+  animation: pulseStrong 1.1s infinite;
+  background: #ffea00;
+  border-radius: 50%;
+  color: #a70d00;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.4rem;
+  height: 52px;
+  line-height: 52px;
+  position: absolute;
+  right: 14px;
+  text-align: center;
+  top: -12px;
+  width: 52px;
 }
 
 .gamble-form {
@@ -533,6 +656,103 @@ input {
   display: grid;
   gap: 6px;
   padding: 10px;
+}
+
+.coupons-zone {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(255, 128, 40, 0.2), transparent 36%),
+    linear-gradient(180deg, #340f1a, #1c0a17);
+  border-color: rgba(255, 154, 102, 0.44);
+}
+
+.coupons-grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+}
+
+.coupon-card {
+  animation: floatCard 2.8s ease-in-out infinite;
+  background: linear-gradient(150deg, #ff5426, #c0191a);
+  border: 1px solid rgba(255, 243, 212, 0.4);
+  border-radius: 14px;
+  color: #fff4e6;
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  position: relative;
+}
+
+.coupon-card:nth-child(2) {
+  animation-delay: 0.22s;
+}
+
+.coupon-card:nth-child(3) {
+  animation-delay: 0.34s;
+}
+
+.coupon-card:nth-child(4) {
+  animation-delay: 0.45s;
+}
+
+.coupon-card h4 {
+  margin: 0;
+}
+
+.coupon-badge {
+  align-self: flex-start;
+  background: #ffed6f;
+  border-radius: 999px;
+  color: #8f1700;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.86rem;
+  letter-spacing: 0.08em;
+  padding: 4px 8px;
+}
+
+.claimed-list {
+  border-top: 1px solid var(--line);
+  display: grid;
+  gap: 10px;
+  padding-top: 10px;
+}
+
+.claimed-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.claimed-item {
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 214, 130, 0.3);
+  border-radius: 10px;
+  display: grid;
+  gap: 4px;
+  padding: 10px;
+}
+
+.stock-popup {
+  animation: popupIn 0.35s cubic-bezier(0.2, 0.9, 0.2, 1), pulseStrong 1.7s infinite;
+  background: linear-gradient(140deg, #ff3d1b, #e51313);
+  border: 1px solid rgba(255, 235, 176, 0.5);
+  border-radius: 14px;
+  bottom: 18px;
+  box-shadow: 0 20px 35px rgba(0, 0, 0, 0.45);
+  display: grid;
+  gap: 6px;
+  max-width: 320px;
+  padding: 12px;
+  position: fixed;
+  right: 18px;
+  z-index: 90;
+}
+
+.stock-popup__kicker {
+  color: #ffe184;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.1rem;
+  letter-spacing: 0.08em;
 }
 
 .game-panel {
@@ -920,6 +1140,12 @@ input {
   100% { transform: rotate(360deg); }
 }
 
+@keyframes floatCard {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-4px); }
+  100% { transform: translateY(0); }
+}
+
 @media (max-width: 860px) {
   .product-detail {
     grid-template-columns: 1fr;
@@ -942,6 +1168,11 @@ input {
 
   .wheel-stage {
     min-height: 470px;
+  }
+
+  .stock-popup {
+    max-width: 280px;
+    right: 12px;
   }
 }
 

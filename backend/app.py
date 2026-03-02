@@ -341,6 +341,52 @@ def place_order():
     return jsonify({"message": "Order placed", "orderId": order_id, "newPoints": new_points})
 
 
+@app.get("/api/orders/my")
+@auth_required
+def my_orders():
+    user_id = g.user["id"]
+    conn = get_connection()
+    orders = conn.execute(
+        """
+        SELECT id, total, fecha, estado
+        FROM orders
+        WHERE user_id = ?
+        ORDER BY id DESC
+        """,
+        (user_id,),
+    ).fetchall()
+
+    result = []
+    for order in orders:
+        items = conn.execute(
+            """
+            SELECT
+              oi.product_id,
+              oi.quantity,
+              oi.price,
+              p.name AS product_name,
+              p.image_url
+            FROM order_items oi
+            LEFT JOIN products p ON p.id = oi.product_id
+            WHERE oi.order_id = ?
+            """,
+            (order["id"],),
+        ).fetchall()
+
+        result.append(
+            {
+                "id": order["id"],
+                "total": order["total"],
+                "fecha": order["fecha"],
+                "estado": order["estado"],
+                "items": [dict(item) for item in items],
+            }
+        )
+
+    conn.close()
+    return jsonify(result)
+
+
 @app.get("/api/user/profile")
 @auth_required
 def profile():

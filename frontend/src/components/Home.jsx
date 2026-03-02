@@ -31,6 +31,7 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
   const [showPromoPopup, setShowPromoPopup] = useState(false);
+  const [stockAlert, setStockAlert] = useState(null);
   const navigate = useNavigate();
 
   const categories = useMemo(
@@ -63,6 +64,28 @@ export default function Home() {
     const promoTimer = window.setTimeout(() => setShowPromoPopup(true), 1200);
     return () => window.clearTimeout(promoTimer);
   }, []);
+
+  useEffect(() => {
+    if (products.length === 0) return undefined;
+
+    const triggerAlert = () => {
+      const pick = products[Math.floor(Math.random() * products.length)];
+      setStockAlert({
+        id: pick.id,
+        name: pick.name,
+        left: Math.max(1, Math.min(pick.stock, Math.floor(Math.random() * 6) + 1)),
+      });
+      window.setTimeout(() => setStockAlert(null), 4200);
+    };
+
+    const first = window.setTimeout(triggerAlert, 2500);
+    const periodic = window.setInterval(triggerAlert, 14000);
+
+    return () => {
+      window.clearTimeout(first);
+      window.clearInterval(periodic);
+    };
+  }, [products]);
 
   useEffect(() => {
     if (!message) return undefined;
@@ -187,6 +210,17 @@ export default function Home() {
               Lo quiero
             </button>
           </article>
+        </div>
+      )}
+
+      {stockAlert && (
+        <div className="stock-popup" role="status">
+          <p className="stock-popup__kicker">Se agota!</p>
+          <h4>{stockAlert.name}</h4>
+          <p>Solo quedan {stockAlert.left} unidades ahora mismo.</p>
+          <Link className="btn btn--xl" to={`/product/${stockAlert.id}`}>
+            Ver producto
+          </Link>
         </div>
       )}
     </section>

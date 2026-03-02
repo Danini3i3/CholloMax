@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import { isAuthenticated } from '../lib/session';
@@ -14,6 +14,18 @@ const translate = (msg) => {
   return dict[msg] || msg || 'Ha ocurrido un error.';
 };
 
+const COUPONS = [
+  { id: 'c5', title: 'Cupon 5%', points: 100, badge: 'HOT' },
+  { id: 'c10', title: 'Cupon 10%', points: 200, badge: 'TOP' },
+  { id: 'c20', title: 'Cupon 20%', points: 400, badge: 'MEGA' },
+  { id: 'ship', title: 'Envio Gratis', points: 100, badge: 'FLASH' },
+];
+
+function buildCouponCode(couponId) {
+  const randomBlock = Math.random().toString(36).slice(2, 7).toUpperCase();
+  return `TEMU-${couponId.toUpperCase()}-${randomBlock}`;
+}
+
 export default function PointsHub() {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -22,7 +34,12 @@ export default function PointsHub() {
   const [choice, setChoice] = useState('red');
   const [redeemPoints, setRedeemPoints] = useState(200);
   const [gambleResult, setGambleResult] = useState(null);
+  const [claimedCoupons, setClaimedCoupons] = useState([]);
   const navigate = useNavigate();
+
+  const couponTicker = useMemo(() => {
+    return ['CUPONES FLASH', 'DESCUENTO MASIVO', 'DOBLE PUNTOS', 'OFERTA LIMITADA'];
+  }, []);
 
   const loadProfile = async () => {
     try {
@@ -70,24 +87,49 @@ export default function PointsHub() {
     }
   };
 
+  const claimCoupon = async (coupon) => {
+    if (!profile || profile.puntos < coupon.points) {
+      setMessage('No tienes puntos suficientes para este cupon.');
+      return;
+    }
+
+    try {
+      await api.post('/user/redeem', { points: coupon.points });
+      const code = buildCouponCode(coupon.id);
+      setClaimedCoupons((prev) => [{ ...coupon, code }, ...prev].slice(0, 6));
+      setProfile((prev) => ({ ...prev, puntos: prev.puntos - coupon.points }));
+      setMessage(`Cupon desbloqueado: ${code}`);
+    } catch (error) {
+      setMessage(translate(error.response?.data?.message));
+    }
+  };
+
   if (loading) return <p>Cargando arena de puntos...</p>;
   if (!profile) return <p className="alert alert--error">{message || 'No se pudo cargar.'}</p>;
 
   return (
-    <section className="content-stack points-hub">
-      <section className="panel points-hero">
-        <p className="kicker">Arena de puntos</p>
-        <h2>Gana y gasta tus puntos</h2>
-        <p>Tienes <strong>{profile.puntos}</strong> puntos disponibles.</p>
+    <section className="content-stack points-hub points-hub--temu">
+      <section className="panel points-hero points-hero--temu">
+        <p className="kicker">Temu style points arena</p>
+        <h2>Centro de Puntos Maximos</h2>
+        <p>
+          Saldo actual: <strong>{profile.puntos}</strong> puntos
+        </p>
+        <div className="points-marquee" aria-hidden="true">
+          {couponTicker.concat(couponTicker).map((item, index) => (
+            <span key={`${item}-${index}`}>{item}</span>
+          ))}
+        </div>
       </section>
 
-      <div className="points-grid">
-        <article className="panel points-card">
-          <h3>Ganar puntos</h3>
-          <p>Juega la ruleta epica y usa gamble para multiplicar saldo.</p>
+      <div className="points-grid points-grid--temu">
+        <article className="panel points-card points-card--temu">
+          <span className="temu-burst">x2</span>
+          <h3>Ganar con juegos y gambleo</h3>
+          <p>Ruleta epica + apuesta rojo/negro para farmear puntos rapido.</p>
           <div className="actions">
             <Link className="btn btn--epic" to="/game">
-              Ir a la ruleta
+              Ruleta grande
             </Link>
           </div>
           <form className="form gamble-form" onSubmit={gamble}>
@@ -117,9 +159,9 @@ export default function PointsHub() {
           )}
         </article>
 
-        <article className="panel points-card">
-          <h3>Gastar puntos</h3>
-          <p>Canjea tus puntos por descuento para tus pedidos.</p>
+        <article className="panel points-card points-card--temu points-card--spend">
+          <h3>Gastar puntos ahora</h3>
+          <p>Canje instantaneo para aplicar descuento de compra.</p>
           <form className="form" onSubmit={redeem}>
             <label htmlFor="redeem-points">Puntos a gastar</label>
             <input
@@ -131,7 +173,7 @@ export default function PointsHub() {
               value={redeemPoints}
             />
             <button className="btn" type="submit">
-              Canjear ahora
+              Canjear ya
             </button>
           </form>
           <div className="redeem-help">
@@ -141,6 +183,39 @@ export default function PointsHub() {
           </div>
         </article>
       </div>
+
+      <section className="panel coupons-zone">
+        <div className="panel__header">
+          <h3>Cupones Flash estilo Temu</h3>
+          <span className="sale-tag">LIMITADO</span>
+        </div>
+        <div className="coupons-grid">
+          {COUPONS.map((coupon) => (
+            <article className="coupon-card" key={coupon.id}>
+              <span className="coupon-badge">{coupon.badge}</span>
+              <h4>{coupon.title}</h4>
+              <p>Costo: {coupon.points} puntos</p>
+              <button className="btn" onClick={() => claimCoupon(coupon)} type="button">
+                Desbloquear
+              </button>
+            </article>
+          ))}
+        </div>
+
+        {claimedCoupons.length > 0 && (
+          <div className="claimed-list">
+            <h4>Mis cupones desbloqueados</h4>
+            <div className="claimed-grid">
+              {claimedCoupons.map((coupon) => (
+                <article className="claimed-item" key={coupon.code}>
+                  <strong>{coupon.title}</strong>
+                  <p>{coupon.code}</p>
+                </article>
+              ))}
+            </div>
+          </div>
+        )}
+      </section>
 
       {message && <p className="alert">{message}</p>}
     </section>
