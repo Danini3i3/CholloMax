@@ -1,0 +1,8 @@
+// src/middlewares/errorHandler.js
+// Centralized error handling middleware
+
+module.exports = function (err, req, res, next) {
+  console.error(err.stack);
+  const status = err.status || 500;
+  res.status(status).json({ message: err.message || 'Server error' });
+};
