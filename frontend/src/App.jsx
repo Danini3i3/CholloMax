@@ -12,6 +12,8 @@ import MyOrders from './components/MyOrders';
 import GamesHub from './components/GamesHub';
 import FallingDealsGame from './components/FallingDealsGame';
 import ThrowDistanceGame from './components/ThrowDistanceGame';
+import ReactionRushGame from './components/ReactionRushGame';
+import MemoryFlipGame from './components/MemoryFlipGame';
 import { clearToken, getToken } from './lib/session';
 
 const navClassName = ({ isActive }) => `top-nav__link${isActive ? ' top-nav__link--active' : ''}`;
@@ -88,6 +90,8 @@ function App() {
           <Route path="/games" element={<GamesHub />} />
           <Route path="/games/falling" element={<FallingDealsGame />} />
           <Route path="/games/throw" element={<ThrowDistanceGame />} />
+          <Route path="/games/reaction" element={<ReactionRushGame />} />
+          <Route path="/games/memory" element={<MemoryFlipGame />} />
           <Route path="/points" element={<PointsHub />} />
         </Routes>
       </main>

@@ -37,6 +37,24 @@ export default function GamesHub() {
             Lanzar ahora
           </Link>
         </article>
+
+        <article className="panel game-card game-card--runner">
+          <span className="sale-tag">REFLEX</span>
+          <h3>Reaction Rush</h3>
+          <p>Toca objetivos al vuelo durante 20 segundos para acumular puntos.</p>
+          <Link className="btn btn--danger" to="/games/reaction">
+            Jugar reaction
+          </Link>
+        </article>
+
+        <article className="panel game-card">
+          <span className="sale-tag">BRAIN</span>
+          <h3>Memory Flip</h3>
+          <p>Encuentra parejas. Menos movimientos = mas recompensa.</p>
+          <Link className="btn btn--epic" to="/games/memory">
+            Jugar memory
+          </Link>
+        </article>
       </div>
     </section>
   );

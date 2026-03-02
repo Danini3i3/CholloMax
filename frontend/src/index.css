@@ -110,8 +110,9 @@ p {
 
 .page-wrap {
   margin: 0 auto;
-  max-width: 1150px;
-  padding: 26px 18px 42px;
+  max-width: none;
+  padding: 26px 14px 42px;
+  width: 100%;
 }
 
 .content-stack {
@@ -970,6 +971,59 @@ input {
   position: relative;
 }
 
+.reaction-board {
+  background:
+    radial-gradient(circle at 50% 45%, rgba(255, 146, 90, 0.22), transparent 48%),
+    linear-gradient(180deg, #0d1731, #15244a);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  height: 330px;
+  overflow: hidden;
+  position: relative;
+}
+
+.reaction-target {
+  animation: pulseStrong 0.8s infinite;
+  align-items: center;
+  background: linear-gradient(180deg, #ffdf9b, #ff8f3f);
+  border: 0;
+  border-radius: 999px;
+  color: #652300;
+  cursor: pointer;
+  display: flex;
+  font-family: 'Bebas Neue', sans-serif;
+  height: 44px;
+  justify-content: center;
+  left: 50%;
+  margin-left: -22px;
+  position: absolute;
+  top: 50%;
+  width: 44px;
+}
+
+.memory-grid {
+  display: grid;
+  gap: 8px;
+  grid-template-columns: repeat(4, minmax(64px, 1fr));
+  max-width: 500px;
+}
+
+.memory-card {
+  background: linear-gradient(150deg, #283f6b, #1a2847);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  color: #d4e7ff;
+  cursor: pointer;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.35rem;
+  height: 78px;
+}
+
+.memory-card--open {
+  background: linear-gradient(150deg, #ffb96b, #ff8438);
+  color: #652503;
+}
+
 .throw-ground {
   border-top: 2px dashed rgba(255, 255, 255, 0.3);
   bottom: 38px;
@@ -1443,6 +1497,10 @@ input {
 
   .throw-arena {
     height: 280px;
+  }
+
+  .memory-grid {
+    grid-template-columns: repeat(3, minmax(64px, 1fr));
   }
 }
 
