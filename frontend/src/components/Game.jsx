@@ -60,6 +60,7 @@ export default function Game() {
   const [message, setMessage] = useState('');
   const [rotation, setRotation] = useState(0);
   const [showConfetti, setShowConfetti] = useState(false);
+  const [showPrizePopup, setShowPrizePopup] = useState(false);
   const navigate = useNavigate();
 
   const confettiPieces = useMemo(() => Array.from({ length: 30 }, (_, i) => i), []);
@@ -74,6 +75,7 @@ export default function Game() {
     setMessage('');
     setResult(null);
     setShowConfetti(false);
+    setShowPrizePopup(false);
 
     try {
       const { data } = await api.post('/game/spin');
@@ -84,6 +86,7 @@ export default function Game() {
 
       window.setTimeout(() => {
         setResult(prize);
+        setShowPrizePopup(true);
         if (prize.type !== 'none') {
           setShowConfetti(true);
           window.setTimeout(() => setShowConfetti(false), 2600);
@@ -100,10 +103,15 @@ export default function Game() {
     <section className="panel game-panel game-panel--epic">
       <p className="kicker">Modo festival</p>
       <h2>Ruleta Epica de CholloMax</h2>
-      <p className="game-subtitle">Luces, premios y giro brutal. Solo una partida cada 24 horas.</p>
+      <p className="game-subtitle">Luces, premios y giro brutal. Cuanto mas gires, mas adrenalina.</p>
 
       <div className="wheel-stage">
         <div className={`wheel-pointer${spinning ? ' wheel-pointer--live' : ''}`} />
+        <div className="wheel-ring wheel-ring--outer" />
+        <div className="wheel-ring wheel-ring--inner" />
+        <div className="wheel-orb wheel-orb--one" />
+        <div className="wheel-orb wheel-orb--two" />
+        <div className="wheel-orb wheel-orb--three" />
         <div className="wheel-aura" />
         <div className="wheel-shell">
           <div className="wheel" style={{ transform: `rotate(${rotation}deg)` }}>
@@ -140,6 +148,22 @@ export default function Game() {
 
       {result && <p className="alert alert--success alert--epic">{prizeText(result)}</p>}
       {message && <p className="alert alert--error">{message}</p>}
+
+      {showPrizePopup && result && (
+        <div className="popup-overlay popup-overlay--epic" onClick={() => setShowPrizePopup(false)} role="presentation">
+          <article className="popup-card popup-card--prize" onClick={(event) => event.stopPropagation()}>
+            <button className="popup-close" onClick={() => setShowPrizePopup(false)} type="button">
+              x
+            </button>
+            <p className="kicker">Resultado</p>
+            <h3>{result.type === 'none' ? 'Sigue intentandolo' : 'Premio desbloqueado'}</h3>
+            <p>{prizeText(result)}</p>
+            <button className="btn btn--xl btn--epic" onClick={() => setShowPrizePopup(false)} type="button">
+              Cerrar
+            </button>
+          </article>
+        </div>
+      )}
     </section>
   );
 }

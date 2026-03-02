@@ -30,6 +30,7 @@ export default function Home() {
   const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
+  const [showPromoPopup, setShowPromoPopup] = useState(false);
   const navigate = useNavigate();
 
   const categories = useMemo(
@@ -57,6 +58,17 @@ export default function Home() {
 
     load();
   }, []);
+
+  useEffect(() => {
+    const promoTimer = window.setTimeout(() => setShowPromoPopup(true), 1200);
+    return () => window.clearTimeout(promoTimer);
+  }, []);
+
+  useEffect(() => {
+    if (!message) return undefined;
+    const msgTimer = window.setTimeout(() => setMessage(''), 2600);
+    return () => window.clearTimeout(msgTimer);
+  }, [message]);
 
   const handleAddToCart = async (productId) => {
     if (!isAuthenticated()) {
@@ -161,6 +173,22 @@ export default function Home() {
       </section>
 
       {message && <p className="alert">{message}</p>}
+
+      {showPromoPopup && (
+        <div className="popup-overlay" onClick={() => setShowPromoPopup(false)} role="presentation">
+          <article className="popup-card popup-card--promo" onClick={(event) => event.stopPropagation()}>
+            <button className="popup-close" onClick={() => setShowPromoPopup(false)} type="button">
+              x
+            </button>
+            <p className="kicker">Mega promo</p>
+            <h3>Cupon oculto desbloqueado</h3>
+            <p>Usa el codigo <strong>EPICO20</strong> para un extra de descuento en tu proximo pedido.</p>
+            <button className="btn btn--xl" onClick={() => setShowPromoPopup(false)} type="button">
+              Lo quiero
+            </button>
+          </article>
+        </div>
+      )}
     </section>
   );
 }

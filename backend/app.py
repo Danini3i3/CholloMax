@@ -401,6 +401,59 @@ def spin_game():
     return jsonify({"prize": prize})
 
 
+@app.post("/api/game/gamble")
+@auth_required
+def gamble_points():
+    body = request.get_json(silent=True) or {}
+    try:
+        stake = int(body.get("stake", 0))
+    except (TypeError, ValueError):
+        stake = 0
+    choice = body.get("choice", "").strip().lower()
+
+    if stake <= 0:
+        return jsonify({"message": "Invalid stake"}), 400
+    if choice not in {"red", "black"}:
+        return jsonify({"message": "Invalid choice"}), 400
+
+    conn = get_connection()
+    user = conn.execute("SELECT id, puntos FROM users WHERE id = ?", (g.user["id"],)).fetchone()
+    if not user:
+        conn.close()
+        return jsonify({"message": "User not found"}), 404
+    if user["puntos"] < stake:
+        conn.close()
+        return jsonify({"message": "Not enough points"}), 400
+
+    rolled = random.choice(["red", "black"])
+    won = rolled == choice
+    delta = stake if won else -stake
+    new_points = user["puntos"] + delta
+
+    conn.execute("UPDATE users SET puntos = ? WHERE id = ?", (new_points, user["id"]))
+    conn.execute(
+        "INSERT INTO historial_juego (user_id, prize, fecha) VALUES (?, ?, ?)",
+        (
+            user["id"],
+            json.dumps(
+                {"type": "gamble", "stake": stake, "choice": choice, "rolled": rolled, "won": won}
+            ),
+            now_str(),
+        ),
+    )
+    conn.commit()
+    conn.close()
+
+    return jsonify(
+        {
+            "result": "win" if won else "lose",
+            "rolled": rolled,
+            "delta": delta,
+            "newPoints": new_points,
+        }
+    )
+
+
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=PORT, debug=True)

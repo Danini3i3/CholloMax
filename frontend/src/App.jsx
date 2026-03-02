@@ -7,6 +7,7 @@ import ProductPage from './components/ProductPage';
 import Cart from './components/Cart';
 import Profile from './components/Profile';
 import Game from './components/Game';
+import PointsHub from './components/PointsHub';
 import { clearToken, getToken } from './lib/session';
 
 const navClassName = ({ isActive }) => `top-nav__link${isActive ? ' top-nav__link--active' : ''}`;
@@ -43,6 +44,9 @@ function App() {
           <NavLink className={navClassName} to="/game">
             Ruleta
           </NavLink>
+          <NavLink className={navClassName} to="/points">
+            Puntos
+          </NavLink>
           {token ? (
             <>
               <NavLink className={navClassName} to="/profile">
@@ -73,6 +77,7 @@ function App() {
           <Route path="/cart" element={<Cart />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/game" element={<Game />} />
+          <Route path="/points" element={<PointsHub />} />
         </Routes>
       </main>
     </div>

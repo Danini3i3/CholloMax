@@ -81,7 +81,7 @@ export default function ProductPage() {
 
         <div className="actions">
           <button className="btn" onClick={addToCart} type="button">
-            Anadir al carrito
+            Añadir al carrito
           </button>
           <button className="btn btn--secondary" onClick={() => navigate('/cart')} type="button">
             Ir al carrito
