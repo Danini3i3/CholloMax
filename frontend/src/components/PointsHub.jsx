@@ -128,8 +128,8 @@ export default function PointsHub() {
           <h3>Ganar con juegos y gambleo</h3>
           <p>Ruleta epica + apuesta rojo/negro para farmear puntos rapido.</p>
           <div className="actions">
-            <Link className="btn btn--epic" to="/game">
-              Ruleta grande
+            <Link className="btn btn--epic" to="/games">
+              Ir a seccion juegos
             </Link>
           </div>
           <form className="form gamble-form" onSubmit={gamble}>

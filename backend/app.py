@@ -500,6 +500,42 @@ def gamble_points():
     )
 
 
+@app.post("/api/game/runner-claim")
+@auth_required
+def claim_runner_points():
+    body = request.get_json(silent=True) or {}
+    try:
+        points = int(body.get("points", 0))
+    except (TypeError, ValueError):
+        points = 0
+
+    if points <= 0:
+        return jsonify({"message": "Invalid points"}), 400
+
+    # Safety cap to avoid abuse from the client.
+    points = min(points, 300)
+
+    conn = get_connection()
+    user = conn.execute("SELECT id, puntos FROM users WHERE id = ?", (g.user["id"],)).fetchone()
+    if not user:
+        conn.close()
+        return jsonify({"message": "User not found"}), 404
+
+    new_points = user["puntos"] + points
+    conn.execute("UPDATE users SET puntos = ? WHERE id = ?", (new_points, user["id"]))
+    conn.execute(
+        "INSERT INTO historial_juego (user_id, prize, fecha) VALUES (?, ?, ?)",
+        (
+            user["id"],
+            json.dumps({"type": "falling_runner", "earned": points}),
+            now_str(),
+        ),
+    )
+    conn.commit()
+    conn.close()
+    return jsonify({"earned": points, "newPoints": new_points})
+
+
 if __name__ == "__main__":
     init_db()
     app.run(host="0.0.0.0", port=PORT, debug=True)

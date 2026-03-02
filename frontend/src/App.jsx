@@ -9,6 +9,9 @@ import Profile from './components/Profile';
 import Game from './components/Game';
 import PointsHub from './components/PointsHub';
 import MyOrders from './components/MyOrders';
+import GamesHub from './components/GamesHub';
+import FallingDealsGame from './components/FallingDealsGame';
+import ThrowDistanceGame from './components/ThrowDistanceGame';
 import { clearToken, getToken } from './lib/session';
 
 const navClassName = ({ isActive }) => `top-nav__link${isActive ? ' top-nav__link--active' : ''}`;
@@ -42,8 +45,8 @@ function App() {
           <NavLink className={navClassName} to="/cart">
             Carrito
           </NavLink>
-          <NavLink className={navClassName} to="/game">
-            Ruleta
+          <NavLink className={navClassName} to="/games">
+            Juegos
           </NavLink>
           <NavLink className={navClassName} to="/points">
             Puntos
@@ -82,6 +85,9 @@ function App() {
           <Route path="/orders" element={<MyOrders />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/game" element={<Game />} />
+          <Route path="/games" element={<GamesHub />} />
+          <Route path="/games/falling" element={<FallingDealsGame />} />
+          <Route path="/games/throw" element={<ThrowDistanceGame />} />
           <Route path="/points" element={<PointsHub />} />
         </Routes>
       </main>

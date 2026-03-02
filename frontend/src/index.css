@@ -438,6 +438,43 @@ input {
   grid-template-columns: 1.1fr 1fr;
 }
 
+.product-bloated {
+  gap: 14px;
+}
+
+.feature-banner {
+  background:
+    radial-gradient(circle at 8% 10%, rgba(255, 196, 112, 0.26), transparent 24%),
+    linear-gradient(110deg, #31152a, #4c1f2f 38%, #74282b);
+  border-color: rgba(255, 211, 146, 0.45);
+}
+
+.feature-banner__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.feature-pill {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 226, 186, 0.45);
+  border-radius: 999px;
+  color: #ffe5be;
+  font-size: 0.86rem;
+  padding: 6px 10px;
+}
+
+.product-detail--temu {
+  background:
+    radial-gradient(circle at 12% 10%, rgba(255, 189, 119, 0.2), transparent 32%),
+    linear-gradient(180deg, rgba(38, 17, 35, 0.95), rgba(19, 16, 34, 0.96));
+  border-color: rgba(255, 130, 90, 0.42);
+}
+
+.product-detail__media {
+  position: relative;
+}
+
 .product-detail__image {
   border-radius: 12px;
   height: 100%;
@@ -446,9 +483,74 @@ input {
   width: 100%;
 }
 
+.product-mini-badges {
+  bottom: 10px;
+  display: flex;
+  gap: 8px;
+  left: 10px;
+  position: absolute;
+}
+
 .product-detail__content {
   display: grid;
   gap: 10px;
+}
+
+.price-stack--big .old-price {
+  font-size: 1.05rem;
+}
+
+.price-stack--big .price {
+  font-size: 1.75rem;
+}
+
+.coupon-inline {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px dashed rgba(255, 190, 132, 0.45);
+  border-radius: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  padding: 10px;
+}
+
+.stock-meter {
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 999px;
+  height: 10px;
+  overflow: hidden;
+  width: 100%;
+}
+
+.stock-meter__bar {
+  animation: pulse 1.4s infinite;
+  background: linear-gradient(90deg, #ff542a, #ffc173);
+  height: 100%;
+}
+
+.product-extras {
+  background: linear-gradient(180deg, rgba(20, 29, 52, 0.95), rgba(17, 21, 40, 0.95));
+}
+
+.extras-grid {
+  display: grid;
+  gap: 10px;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+}
+
+.extra-box {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 10px;
+  display: grid;
+  gap: 6px;
+  padding: 10px;
+}
+
+.extra-box--hot {
+  border-color: rgba(255, 133, 89, 0.52);
+  box-shadow: 0 0 18px rgba(255, 113, 63, 0.18);
 }
 
 .cart-list {
@@ -730,6 +832,166 @@ input {
   display: grid;
   gap: 4px;
   padding: 10px;
+}
+
+.games-hero {
+  background:
+    radial-gradient(circle at 15% 15%, rgba(255, 206, 132, 0.28), transparent 30%),
+    linear-gradient(140deg, #8a0f1f, #e92a2a 45%, #ff7f32);
+  border-color: rgba(255, 229, 180, 0.5);
+}
+
+.games-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+}
+
+.game-card {
+  overflow: hidden;
+  position: relative;
+}
+
+.game-card--runner {
+  background: linear-gradient(160deg, rgba(16, 44, 74, 0.95), rgba(11, 23, 44, 0.95));
+}
+
+.game-card--throw {
+  background: linear-gradient(160deg, rgba(71, 22, 43, 0.96), rgba(28, 8, 26, 0.96));
+}
+
+.arcade-panel {
+  background:
+    radial-gradient(circle at 16% 16%, rgba(255, 199, 120, 0.16), transparent 28%),
+    linear-gradient(170deg, #1b2747, #131c35);
+}
+
+.arcade-hud,
+.throw-stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.falling-board {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      rgba(255, 255, 255, 0.06) 0px,
+      rgba(255, 255, 255, 0.06) 2px,
+      transparent 2px,
+      transparent 20%
+    ),
+    linear-gradient(180deg, #0a0f1f, #10193a 70%, #1d2f63);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 14px;
+  height: 420px;
+  overflow: hidden;
+  position: relative;
+}
+
+.lane-line {
+  border-left: 1px dashed rgba(255, 255, 255, 0.2);
+  height: 100%;
+  position: absolute;
+  top: 0;
+}
+
+.runner-player {
+  align-items: center;
+  background: linear-gradient(180deg, #ffe185, #ffab32);
+  border-radius: 10px;
+  bottom: 18px;
+  color: #5a1f00;
+  display: flex;
+  font-family: 'Bebas Neue', sans-serif;
+  height: 34px;
+  justify-content: center;
+  left: 10%;
+  margin-left: -34px;
+  position: absolute;
+  width: 68px;
+  z-index: 3;
+}
+
+.falling-item {
+  align-items: center;
+  border-radius: 999px;
+  color: #081320;
+  display: flex;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.78rem;
+  height: 40px;
+  justify-content: center;
+  left: 10%;
+  margin-left: -20px;
+  position: absolute;
+  width: 40px;
+  z-index: 2;
+}
+
+.falling-item--bomb {
+  background: #ff6f61;
+  box-shadow: 0 0 18px rgba(255, 111, 97, 0.6);
+  color: #4a0500;
+}
+
+.falling-item--discount {
+  background: #8cffd2;
+  box-shadow: 0 0 18px rgba(140, 255, 210, 0.55);
+  color: #064234;
+}
+
+.falling-item--coupon {
+  background: #ffd17c;
+  box-shadow: 0 0 18px rgba(255, 209, 124, 0.55);
+  color: #603700;
+}
+
+.arcade-controls {
+  display: flex;
+  gap: 8px;
+}
+
+.throw-controls {
+  display: grid;
+  gap: 8px;
+  max-width: 460px;
+}
+
+.throw-arena {
+  background:
+    radial-gradient(circle at 50% 10%, rgba(99, 178, 255, 0.22), transparent 40%),
+    linear-gradient(180deg, #13213e 0%, #0f1c35 68%, #1f4c25 68%, #1f4c25 100%);
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  border-radius: 14px;
+  height: 320px;
+  overflow: hidden;
+  position: relative;
+}
+
+.throw-ground {
+  border-top: 2px dashed rgba(255, 255, 255, 0.3);
+  bottom: 38px;
+  left: 0;
+  position: absolute;
+  width: 100%;
+}
+
+.throw-projectile {
+  align-items: center;
+  background: linear-gradient(160deg, #ffde9e, #ff8c3a);
+  border-radius: 999px;
+  color: #5b2300;
+  display: flex;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.78rem;
+  height: 34px;
+  justify-content: center;
+  left: 8%;
+  margin-left: -17px;
+  position: absolute;
+  width: 34px;
 }
 
 .stock-popup {
@@ -1173,6 +1435,14 @@ input {
   .stock-popup {
     max-width: 280px;
     right: 12px;
+  }
+
+  .falling-board {
+    height: 360px;
+  }
+
+  .throw-arena {
+    height: 280px;
   }
 }
 
