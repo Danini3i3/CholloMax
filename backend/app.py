@@ -384,21 +384,6 @@ def random_prize():
 def spin_game():
     user_id = g.user["id"]
     conn = get_connection()
-    row = conn.execute(
-        """
-        SELECT fecha FROM historial_juego
-        WHERE user_id = ?
-        ORDER BY id DESC
-        LIMIT 1
-        """,
-        (user_id,),
-    ).fetchone()
-
-    if row:
-        last_time = datetime.strptime(row["fecha"], "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
-        if datetime.now(timezone.utc) - last_time < timedelta(hours=24):
-            conn.close()
-            return jsonify({"message": "Already played in last 24h"}), 400
 
     prize = random_prize()
     conn.execute(

@@ -15,6 +15,15 @@ function timeLeft(endDate) {
   return `${hours}h ${mins}m`;
 }
 
+function getDiscountRate(id) {
+  const rates = [18, 22, 27, 34, 41, 53];
+  return rates[id % rates.length];
+}
+
+function formatOfferPrice(price, discountRate) {
+  return price * (1 - discountRate / 100);
+}
+
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [offers, setOffers] = useState([]);
@@ -69,6 +78,14 @@ export default function Home() {
         <p className="kicker">Ofertas de 24 horas</p>
         <h1>CholloMax</h1>
         <p>Descubre productos en tendencia, suma puntos y juega tu ruleta diaria.</p>
+        <div className="hero__ticker" aria-hidden="true">
+          <span>ENVIO GRATIS</span>
+          <span>DESCUENTOS EXTREMOS</span>
+          <span>FLASH EVERY HOUR</span>
+          <span>2x PUNTOS HOY</span>
+          <span>ENVIO GRATIS</span>
+          <span>DESCUENTOS EXTREMOS</span>
+        </div>
       </div>
 
       {offers.length > 0 && (
@@ -79,7 +96,10 @@ export default function Home() {
               <article className="card card--offer" key={offer.id}>
                 <h3>{offer.title || 'Oferta especial'}</h3>
                 <p>{offer.description || 'Sin descripcion'}</p>
-                <span className="pill">{timeLeft(offer.fecha_fin)}</span>
+                <div className="offer-meta">
+                  <span className="pill">Termina en {timeLeft(offer.fecha_fin)}</span>
+                  <span className="offer-pulse">FLASH</span>
+                </div>
               </article>
             ))}
           </div>
@@ -104,7 +124,9 @@ export default function Home() {
         ) : (
           <div className="grid grid--products">
             {filteredProducts.map((product) => (
-              <article className="card product-card" key={product.id}>
+              <article className="card product-card sale-card" key={product.id}>
+                <span className="sale-badge">-{getDiscountRate(product.id)}%</span>
+                <span className="sale-tag">TOP DEAL</span>
                 <img
                   alt={product.name}
                   className="product-card__image"
@@ -115,7 +137,14 @@ export default function Home() {
                 />
                 <h3>{product.name}</h3>
                 <p className="product-card__description">{product.description || 'Sin descripcion'}</p>
-                <p className="price">{formatMoney(product.price)}</p>
+                <div className="price-stack">
+                  <p className="old-price">{formatMoney(product.price)}</p>
+                  <p className="price">{formatMoney(formatOfferPrice(product.price, getDiscountRate(product.id)))}</p>
+                </div>
+                <div className="deal-line">
+                  <span className="deal-chip">Tiempo limitado</span>
+                  <span className="deal-chip deal-chip--hot">Quedan {Math.max(2, product.stock - 1)}</span>
+                </div>
                 <p className="stock">Stock: {product.stock}</p>
                 <div className="actions">
                   <Link className="btn btn--secondary" to={`/product/${product.id}`}>
