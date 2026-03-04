@@ -65,7 +65,7 @@ export default function ThrowDistanceGame() {
     }
 
     try {
-      const { data } = await api.post('/game/runner-claim', { points });
+      const { data } = await api.post('/game/runner-claim', { points, gameKey: 'throw_distance' });
       setStatus(`Ganaste ${data.earned} puntos por distancia. Saldo: ${data.newPoints}`);
     } catch (error) {
       setStatus(error.response?.data?.message || 'No se pudo reclamar puntos');

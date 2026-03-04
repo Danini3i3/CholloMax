@@ -66,7 +66,10 @@ export default function MemoryFlipGame() {
       return;
     }
     try {
-      const { data } = await api.post('/game/runner-claim', { points: Math.min(240, points) });
+      const { data } = await api.post('/game/runner-claim', {
+        points: Math.min(240, points),
+        gameKey: 'memory_flip',
+      });
       setStatus(`Memoria top: +${data.earned} puntos. Saldo: ${data.newPoints}`);
       setClaimed(true);
     } catch (error) {

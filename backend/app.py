@@ -20,6 +20,7 @@ CORS(app)
 
 JWT_SECRET = os.getenv("JWT_SECRET", "change-me-in-production")
 PORT = int(os.getenv("PORT", "5000"))
+GAME_CLAIM_COOLDOWN_SECONDS = int(os.getenv("GAME_CLAIM_COOLDOWN_SECONDS", "90"))
 
 # Ensure SQLite schema exists for both local run and serverless runtime.
 init_db()
@@ -27,6 +28,40 @@ init_db()
 
 def now_str():
     return datetime.now(timezone.utc).strftime("%Y-%m-%d %H:%M:%S")
+
+
+def parse_db_datetime(raw):
+    return datetime.strptime(raw, "%Y-%m-%d %H:%M:%S").replace(tzinfo=timezone.utc)
+
+
+def claim_cooldown_remaining(conn, user_id, game_key):
+    rows = conn.execute(
+        """
+        SELECT prize, fecha
+        FROM historial_juego
+        WHERE user_id = ?
+        ORDER BY id DESC
+        LIMIT 120
+        """,
+        (user_id,),
+    ).fetchall()
+    now = datetime.now(timezone.utc)
+
+    for row in rows:
+        try:
+            prize = json.loads(row["prize"])
+        except Exception:
+            continue
+
+        last_game_key = str(prize.get("gameKey") or "")
+        if not last_game_key or last_game_key != game_key:
+            continue
+
+        elapsed = (now - parse_db_datetime(row["fecha"])).total_seconds()
+        remaining = int(GAME_CLAIM_COOLDOWN_SECONDS - elapsed)
+        return max(0, remaining)
+
+    return 0
 
 
 def decode_token(token):
@@ -293,6 +328,38 @@ def remove_cart_item():
 @app.post("/api/orders/place")
 @auth_required
 def place_order():
+    body = request.get_json(silent=True) or {}
+    customer = body.get("customer") or {}
+    payment_method = str(body.get("paymentMethod", "")).strip()
+    promo_code = str(body.get("promoCode", "")).strip().upper()
+    required_customer_fields = (
+        "fullName",
+        "email",
+        "phone",
+        "address",
+        "city",
+        "postalCode",
+        "country",
+    )
+    allowed_payment_methods = {"card", "paypal", "bizum", "bank_transfer"}
+
+    if not isinstance(customer, dict):
+        return jsonify({"message": "Customer data is invalid"}), 422
+
+    missing_fields = [field for field in required_customer_fields if not str(customer.get(field, "")).strip()]
+    if missing_fields:
+        return jsonify({"message": f"Missing required fields: {', '.join(missing_fields)}"}), 422
+
+    if payment_method not in allowed_payment_methods:
+        return jsonify({"message": "Invalid payment method"}), 422
+
+    promo_percent = 0
+    if promo_code:
+        if promo_code == "SOBRETOCHO35":
+            promo_percent = 35
+        else:
+            return jsonify({"message": "Invalid promo code"}), 422
+
     user_id = g.user["id"]
     conn = get_connection()
     items = conn.execute(
@@ -309,16 +376,19 @@ def place_order():
         conn.close()
         return jsonify({"message": "Cart empty"}), 400
 
-    total = 0.0
+    subtotal = 0.0
     for item in items:
         if item["quantity"] > item["stock"]:
             conn.close()
             return jsonify({"message": f"Not enough stock for {item['name']}"}), 400
-        total += item["price"] * item["quantity"]
+        subtotal += item["price"] * item["quantity"]
+
+    discount_amount = round(subtotal * (promo_percent / 100), 2) if promo_percent > 0 else 0.0
+    final_total = round(subtotal - discount_amount, 2)
 
     cur = conn.execute(
         "INSERT INTO orders (user_id, total, fecha, estado) VALUES (?, ?, ?, ?)",
-        (user_id, total, now_str(), "paid"),
+        (user_id, final_total, now_str(), "paid"),
     )
     order_id = cur.lastrowid
 
@@ -336,12 +406,21 @@ def place_order():
         )
 
     conn.execute("DELETE FROM cart_items WHERE user_id = ?", (user_id,))
-    new_points = g.user["puntos"] + int(total)
+    new_points = g.user["puntos"] + int(final_total)
     conn.execute("UPDATE users SET puntos = ? WHERE id = ?", (new_points, user_id))
     conn.commit()
     conn.close()
 
-    return jsonify({"message": "Order placed", "orderId": order_id, "newPoints": new_points})
+    return jsonify(
+        {
+            "message": "Order placed",
+            "orderId": order_id,
+            "newPoints": new_points,
+            "promoApplied": promo_percent > 0,
+            "discountAmount": discount_amount,
+            "finalTotal": final_total,
+        }
+    )
 
 
 @app.get("/api/orders/my")
@@ -511,9 +590,12 @@ def claim_runner_points():
         points = int(body.get("points", 0))
     except (TypeError, ValueError):
         points = 0
+    game_key = str(body.get("gameKey", "generic_game")).strip().lower()
 
     if points <= 0:
         return jsonify({"message": "Invalid points"}), 400
+    if not game_key or len(game_key) > 40 or not game_key.replace("_", "").isalnum():
+        return jsonify({"message": "Invalid game key"}), 400
 
     # Safety cap to avoid abuse from the client.
     points = min(points, 300)
@@ -524,13 +606,26 @@ def claim_runner_points():
         conn.close()
         return jsonify({"message": "User not found"}), 404
 
+    remaining = claim_cooldown_remaining(conn, user["id"], game_key)
+    if remaining > 0:
+        conn.close()
+        return (
+            jsonify(
+                {
+                    "message": f"Cooldown active: wait {remaining}s before claiming again for this game",
+                    "cooldownSeconds": remaining,
+                }
+            ),
+            429,
+        )
+
     new_points = user["puntos"] + points
     conn.execute("UPDATE users SET puntos = ? WHERE id = ?", (new_points, user["id"]))
     conn.execute(
         "INSERT INTO historial_juego (user_id, prize, fecha) VALUES (?, ?, ?)",
         (
             user["id"],
-            json.dumps({"type": "falling_runner", "earned": points}),
+            json.dumps({"type": "game_claim", "gameKey": game_key, "earned": points}),
             now_str(),
         ),
     )

@@ -14,12 +14,19 @@ import FallingDealsGame from './components/FallingDealsGame';
 import ThrowDistanceGame from './components/ThrowDistanceGame';
 import ReactionRushGame from './components/ReactionRushGame';
 import MemoryFlipGame from './components/MemoryFlipGame';
+import ClickFrenzyGame from './components/ClickFrenzyGame';
+import DealHunterGame from './components/DealHunterGame';
+import DuelArenaGame from './components/DuelArenaGame';
+import RtxTunnelGame from './components/RtxTunnelGame';
+import TermsConditions from './components/TermsConditions';
 import { clearToken, getToken } from './lib/session';
 
 const navClassName = ({ isActive }) => `top-nav__link${isActive ? ' top-nav__link--active' : ''}`;
 
 function App() {
   const [token, setToken] = useState(getToken());
+  const [ageGateOpen, setAgeGateOpen] = useState(() => window.localStorage.getItem('age_confirmed_18') !== '1');
+  const [termsAccepted, setTermsAccepted] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -32,6 +39,16 @@ function App() {
     clearToken();
     setToken(null);
     navigate('/login');
+  };
+
+  const confirmAge = () => {
+    if (!termsAccepted) return;
+    window.localStorage.setItem('age_confirmed_18', '1');
+    setAgeGateOpen(false);
+  };
+
+  const rejectAge = () => {
+    window.location.href = 'https://www.google.com';
   };
 
   return (
@@ -52,6 +69,9 @@ function App() {
           </NavLink>
           <NavLink className={navClassName} to="/points">
             Puntos
+          </NavLink>
+          <NavLink className={navClassName} to="/terms">
+            Terminos
           </NavLink>
           {token ? (
             <>
@@ -92,9 +112,38 @@ function App() {
           <Route path="/games/throw" element={<ThrowDistanceGame />} />
           <Route path="/games/reaction" element={<ReactionRushGame />} />
           <Route path="/games/memory" element={<MemoryFlipGame />} />
+          <Route path="/games/click-frenzy" element={<ClickFrenzyGame />} />
+          <Route path="/games/deal-hunter" element={<DealHunterGame />} />
+          <Route path="/games/duel-arena" element={<DuelArenaGame />} />
+          <Route path="/games/rtx-tunnel" element={<RtxTunnelGame />} />
           <Route path="/points" element={<PointsHub />} />
+          <Route path="/terms" element={<TermsConditions />} />
         </Routes>
       </main>
+
+      {ageGateOpen && (
+        <div className="popup-overlay popup-overlay--epic" role="dialog" aria-modal="true">
+          <article className="popup-card popup-card--promo age-popup">
+            <p className="kicker">Acceso restringido</p>
+            <h3>Confirmacion +18</h3>
+            <p>Debes confirmar que tienes 18 anos o mas para continuar en CholloMax.</p>
+            <label className="terms-check">
+              <input checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} type="checkbox" />
+              <span>
+                Acepto los <Link to="/terms">Terminos y Condiciones</Link>.
+              </span>
+            </label>
+            <div className="actions">
+              <button className="btn btn--epic" disabled={!termsAccepted} onClick={confirmAge} type="button">
+                Soy mayor de 18
+              </button>
+              <button className="btn btn--danger" onClick={rejectAge} type="button">
+                Salir
+              </button>
+            </div>
+          </article>
+        </div>
+      )}
     </div>
   );
 }

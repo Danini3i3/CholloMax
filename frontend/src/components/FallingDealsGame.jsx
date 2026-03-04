@@ -48,7 +48,7 @@ export default function FallingDealsGame() {
 
     const earned = Math.min(300, Math.floor(finalScore * 0.9));
     try {
-      const { data } = await api.post('/game/runner-claim', { points: earned });
+      const { data } = await api.post('/game/runner-claim', { points: earned, gameKey: 'falling_deals' });
       setStatus(`Partida terminada. Ganaste ${data.earned} puntos. Saldo: ${data.newPoints}`);
       setClaimed(true);
     } catch (error) {

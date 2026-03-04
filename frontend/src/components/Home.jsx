@@ -1,7 +1,10 @@
-import React, { useEffect, useMemo, useState } from 'react';
+﻿import React, { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import { isAuthenticated } from '../lib/session';
+
+const PROMO_CODE = 'SOBRETOCHO35';
+const PROMO_PERCENT = 35;
 
 function formatMoney(value) {
   return new Intl.NumberFormat('es-ES', { style: 'currency', currency: 'EUR' }).format(value || 0);
@@ -30,8 +33,9 @@ export default function Home() {
   const [category, setCategory] = useState('');
   const [loading, setLoading] = useState(true);
   const [message, setMessage] = useState('');
-  const [showPromoPopup, setShowPromoPopup] = useState(false);
-  const [stockAlert, setStockAlert] = useState(null);
+  const [promoOpen, setPromoOpen] = useState(false);
+  const [promoOpened, setPromoOpened] = useState(false);
+  const [promoActive, setPromoActive] = useState(() => window.localStorage.getItem('promo_sobre_tocho') === '1');
   const navigate = useNavigate();
 
   const categories = useMemo(
@@ -61,37 +65,17 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const promoTimer = window.setTimeout(() => setShowPromoPopup(true), 1200);
-    return () => window.clearTimeout(promoTimer);
-  }, []);
-
-  useEffect(() => {
-    if (products.length === 0) return undefined;
-
-    const triggerAlert = () => {
-      const pick = products[Math.floor(Math.random() * products.length)];
-      setStockAlert({
-        id: pick.id,
-        name: pick.name,
-        left: Math.max(1, Math.min(pick.stock, Math.floor(Math.random() * 6) + 1)),
-      });
-      window.setTimeout(() => setStockAlert(null), 4200);
-    };
-
-    const first = window.setTimeout(triggerAlert, 2500);
-    const periodic = window.setInterval(triggerAlert, 14000);
-
-    return () => {
-      window.clearTimeout(first);
-      window.clearInterval(periodic);
-    };
-  }, [products]);
-
-  useEffect(() => {
     if (!message) return undefined;
     const msgTimer = window.setTimeout(() => setMessage(''), 2600);
     return () => window.clearTimeout(msgTimer);
   }, [message]);
+
+  const unlockPromo = () => {
+    setPromoOpened(true);
+    setPromoActive(true);
+    window.localStorage.setItem('promo_sobre_tocho', '1');
+    setMessage(`Promo activada: ${PROMO_PERCENT}% con ${PROMO_CODE}`);
+  };
 
   const handleAddToCart = async (productId) => {
     if (!isAuthenticated()) {
@@ -122,6 +106,26 @@ export default function Home() {
           <span>DESCUENTOS EXTREMOS</span>
         </div>
       </div>
+
+      <section className="panel promo-home">
+        <div className="panel__header">
+          <h2>Sobre Promo</h2>
+          <span className="pill">-{PROMO_PERCENT}% visible</span>
+        </div>
+        <p>
+          El descuento se ve antes de abrir: <strong>{PROMO_CODE}</strong> da <strong>{PROMO_PERCENT}%</strong> en
+          carrito.
+        </p>
+        <div className="actions">
+          <button className="btn btn--epic" onClick={() => setPromoOpen(true)} type="button">
+            Ver sobre
+          </button>
+          <Link className="btn btn--secondary" to="/cart">
+            Ir al carrito
+          </Link>
+          {promoActive && <span className="deal-chip deal-chip--hot">Cupon activo</span>}
+        </div>
+      </section>
 
       {offers.length > 0 && (
         <section className="panel">
@@ -197,30 +201,41 @@ export default function Home() {
 
       {message && <p className="alert">{message}</p>}
 
-      {showPromoPopup && (
-        <div className="popup-overlay" onClick={() => setShowPromoPopup(false)} role="presentation">
-          <article className="popup-card popup-card--promo" onClick={(event) => event.stopPropagation()}>
-            <button className="popup-close" onClick={() => setShowPromoPopup(false)} type="button">
+      {promoOpen && (
+        <div className="popup-overlay popup-overlay--epic" onClick={() => setPromoOpen(false)} role="presentation">
+          <article className="popup-card promo-popup" onClick={(event) => event.stopPropagation()}>
+            <button className="popup-close" onClick={() => setPromoOpen(false)} type="button">
               x
             </button>
-            <p className="kicker">Mega promo</p>
-            <h3>Cupon oculto desbloqueado</h3>
-            <p>Usa el codigo <strong>EPICO20</strong> para un extra de descuento en tu proximo pedido.</p>
-            <button className="btn btn--xl" onClick={() => setShowPromoPopup(false)} type="button">
-              Lo quiero
-            </button>
-          </article>
-        </div>
-      )}
+            <p className="kicker">Sobre premium</p>
+            <h3>Descuento visible antes de abrir</h3>
+            <p>
+              Premio dentro: <strong>{PROMO_PERCENT}% OFF</strong> con codigo <strong>{PROMO_CODE}</strong>.
+            </p>
 
-      {stockAlert && (
-        <div className="stock-popup" role="status">
-          <p className="stock-popup__kicker">Se agota!</p>
-          <h4>{stockAlert.name}</h4>
-          <p>Solo quedan {stockAlert.left} unidades ahora mismo.</p>
-          <Link className="btn btn--xl" to={`/product/${stockAlert.id}`}>
-            Ver producto
-          </Link>
+            <div className={`promo-envelope ${promoOpened ? 'promo-envelope--open' : ''}`}>
+              <div className="promo-envelope__back" />
+              <div className="promo-envelope__paper">
+                <strong>{PROMO_PERCENT}% OFF</strong>
+                <small>{PROMO_CODE}</small>
+              </div>
+              <div className="promo-envelope__front" />
+              <div className="promo-envelope__flap" />
+            </div>
+
+            {!promoOpened ? (
+              <button className="btn btn--xl" onClick={unlockPromo} type="button">
+                Abrir sobre
+              </button>
+            ) : (
+              <div className="actions">
+                <span className="alert alert--success">Descuento activado para el carrito.</span>
+                <Link className="btn" to="/cart">
+                  Usar descuento
+                </Link>
+              </div>
+            )}
+          </article>
         </div>
       )}
     </section>

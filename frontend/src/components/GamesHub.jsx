@@ -80,6 +80,62 @@ export default function GamesHub() {
             Jugar memory
           </Link>
         </article>
+
+        <article className="panel game-card game-card--throw">
+          <img
+            alt="Miniatura click frenzy"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1518773553398-650c184e0bb3?auto=format&fit=crop&w=900&q=80"
+          />
+          <span className="sale-tag">SPEED</span>
+          <h3>Click Frenzy</h3>
+          <p>Ronda de 12 segundos. Haz spam de clicks para sumar puntos rapidos.</p>
+          <Link className="btn btn--danger" to="/games/click-frenzy">
+            Jugar frenzy
+          </Link>
+        </article>
+
+        <article className="panel game-card game-card--runner">
+          <img
+            alt="Miniatura deal hunter"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1563013544-824ae1b704d3?auto=format&fit=crop&w=900&q=80"
+          />
+          <span className="sale-tag">PRICE</span>
+          <h3>Deal Hunter</h3>
+          <p>Adivina el precio secreto de cada ronda. Cuanto mas cerca, mejor premio.</p>
+          <Link className="btn btn--epic" to="/games/deal-hunter">
+            Cazar chollo
+          </Link>
+        </article>
+
+        <article className="panel game-card">
+          <img
+            alt="Miniatura duel arena"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1542751371-adc38448a05e?auto=format&fit=crop&w=900&q=80"
+          />
+          <span className="sale-tag">PVP</span>
+          <h3>Duel Arena</h3>
+          <p>Modo multijugador local: J1 con A y J2 con L, gana quien mas pulse.</p>
+          <Link className="btn btn--danger" to="/games/duel-arena">
+            Jugar multi
+          </Link>
+        </article>
+
+        <article className="panel game-card game-card--throw">
+          <img
+            alt="Miniatura rtx tunnel"
+            className="game-thumb"
+            src="https://images.unsplash.com/photo-1517430816045-df4b7de11d1d?auto=format&fit=crop&w=900&q=80"
+          />
+          <span className="sale-tag">RTX</span>
+          <h3>RTX Tunnel 3D</h3>
+          <p>Modo visual neon estilo raytrace. Esquiva beams y recoge boosts.</p>
+          <Link className="btn btn--epic" to="/games/rtx-tunnel">
+            Jugar RTX
+          </Link>
+        </article>
       </div>
     </section>
   );

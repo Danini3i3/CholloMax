@@ -77,17 +77,6 @@ export default function ProductPage() {
 
   return (
     <section className="content-stack product-bloated">
-      <section className="panel feature-banner">
-        <p className="kicker">Por que comprar aqui</p>
-        <div className="feature-banner__row">
-          {FEATURES.map((feature) => (
-            <span className="feature-pill" key={feature}>
-              {feature}
-            </span>
-          ))}
-        </div>
-      </section>
-
       <section className="panel product-detail product-detail--temu">
         <div className="product-detail__media">
           <span className="sale-badge">-{discountRate}%</span>
