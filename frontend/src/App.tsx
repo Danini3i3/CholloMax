@@ -87,14 +87,15 @@ function App() {
               </button>
             </>
           ) : (
-            <>
+            <div className="auth-nav-group" role="group" aria-label="Acceso">
               <NavLink className={navClassName} to="/login">
                 Login
               </NavLink>
+              <span className="auth-nav-separator">|</span>
               <NavLink className={navClassName} to="/register">
                 Registro
               </NavLink>
-            </>
+            </div>
           )}
         </nav>
       </header>

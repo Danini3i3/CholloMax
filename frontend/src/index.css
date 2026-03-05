@@ -65,7 +65,7 @@ p {
   display: flex;
   justify-content: space-between;
   left: 0;
-  padding: 16px 22px;
+  padding: 12px 18px;
   position: sticky;
   top: 0;
   z-index: 30;
@@ -88,14 +88,14 @@ p {
   align-items: center;
   display: flex;
   flex-wrap: wrap;
-  gap: 8px;
+  gap: 6px;
 }
 
 .top-nav__link {
   border-radius: 999px;
   color: var(--ink);
-  font-size: 0.95rem;
-  padding: 8px 14px;
+  font-size: 0.9rem;
+  padding: 6px 10px;
 }
 
 .top-nav__link::before {
@@ -145,17 +145,37 @@ p {
   color: #ffd282;
 }
 
+.auth-nav-group {
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  display: inline-flex;
+  gap: 2px;
+  padding: 2px;
+}
+
+.auth-nav-group .top-nav__link {
+  padding: 5px 9px;
+}
+
+.auth-nav-separator {
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 0.8rem;
+  user-select: none;
+}
+
 .page-wrap {
   margin: 0 auto;
-  max-width: none;
-  padding: 26px 14px 42px;
+  max-width: 1260px;
+  padding: 16px 12px 26px;
   width: 100%;
 }
 
 .content-stack {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: 12px;
 }
 
 .hero {
@@ -163,11 +183,11 @@ p {
     linear-gradient(130deg, rgba(255, 66, 66, 0.26), rgba(255, 142, 44, 0.12) 36%, rgba(65, 208, 255, 0.16)),
     #131f35;
   border: 1px solid var(--line);
-  border-radius: 22px;
+  border-radius: 16px;
   box-shadow: var(--shadow);
   color: #f4f8fb;
   overflow: hidden;
-  padding: 28px;
+  padding: 18px;
   position: relative;
 }
 
@@ -191,7 +211,7 @@ p {
   animation: ticker 18s linear infinite;
   display: flex;
   gap: 24px;
-  margin-top: 18px;
+  margin-top: 10px;
   white-space: nowrap;
 }
 
@@ -217,8 +237,8 @@ p {
   box-shadow: var(--shadow);
   display: flex;
   flex-direction: column;
-  gap: 16px;
-  padding: 18px;
+  gap: 10px;
+  padding: 12px;
 }
 
 .panel__header {
@@ -242,7 +262,8 @@ p {
 }
 
 .grid--products {
-  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(220px, 250px));
+  justify-content: start;
 }
 
 .card {
@@ -251,8 +272,8 @@ p {
   border-radius: 12px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  padding: 14px;
+  gap: 8px;
+  padding: 10px;
 }
 
 .card--offer {
@@ -471,7 +492,7 @@ input {
 
 .auth-panel {
   margin: 0 auto;
-  max-width: 520px;
+  max-width: 460px;
 }
 
 .product-detail {
@@ -605,12 +626,12 @@ input {
     radial-gradient(circle at 15% 20%, rgba(255, 229, 133, 0.28), transparent 35%),
     linear-gradient(110deg, #8d101f, #cc2e1f 45%, #ff7a1a);
   border: 1px solid rgba(255, 234, 180, 0.5);
-  border-radius: 14px;
+  border-radius: 10px;
   color: #fff7ea;
   cursor: pointer;
   display: grid;
-  gap: 4px;
-  padding: 14px;
+  gap: 2px;
+  padding: 10px;
   text-align: left;
 }
 
@@ -624,7 +645,7 @@ input {
   color: #7c2100;
   font-family: 'Bebas Neue', sans-serif;
   letter-spacing: 0.08em;
-  padding: 4px 10px;
+  padding: 3px 8px;
   width: fit-content;
 }
 
