@@ -81,10 +81,10 @@ export default function ThrowDistanceGame() {
             Volver a juegos
           </Link>
         </div>
-        <p>Lanza objetos lo mas lejos posible. Cuanto mas lejos, mas puntos.</p>
+        <p>Lanza objetos lo más lejos posible. Cuanto más lejos, más puntos.</p>
 
         <div className="throw-controls">
-          <label htmlFor="angle">Angulo: {angle} deg</label>
+          <label htmlFor="angle">Ángulo: {angle} deg</label>
           <input id="angle" max={75} min={15} onChange={(event) => setAngle(Number(event.target.value))} type="range" value={angle} />
 
           <label htmlFor="power">Potencia: {power}%</label>
@@ -94,7 +94,7 @@ export default function ThrowDistanceGame() {
         <div className="throw-stats">
           <span className="pill">Viento: {wind} m/s</span>
           <span className="pill">Distancia: {distance} m</span>
-          <span className="pill">Record: {best} m</span>
+          <span className="pill">Récord: {best} m</span>
           <span className="pill">Puntos: {points}</span>
         </div>
 

@@ -20,7 +20,7 @@ export default function Login() {
       saveToken(data.token);
       navigate('/');
     } catch (err) {
-      setError(err.response?.data?.message || 'Credenciales invalidas');
+      setError(err.response?.data?.message || 'Credenciales inválidas');
     } finally {
       setLoading(false);
     }
@@ -28,8 +28,8 @@ export default function Login() {
 
   return (
     <section className="panel auth-panel">
-      <h2>Inicia sesion</h2>
-      <p>Accede para guardar carrito, canjear puntos y jugar cada dia.</p>
+      <h2>Inicia sesión</h2>
+      <p>Accede para guardar carrito, canjear puntos y jugar cada día.</p>
       <form className="form" onSubmit={handleSubmit}>
         <label htmlFor="email">Email</label>
         <input
@@ -40,7 +40,7 @@ export default function Login() {
           value={email}
         />
 
-        <label htmlFor="password">Contrasena</label>
+        <label htmlFor="password">Contraseña</label>
         <input
           id="password"
           minLength={6}
@@ -58,7 +58,7 @@ export default function Login() {
       {error && <p className="alert alert--error">{error}</p>}
 
       <p>
-        No tienes cuenta? <Link to="/register">Registrate aqui</Link>
+        ¿No tienes cuenta? <Link to="/register">Regístrate aquí</Link>
       </p>
     </section>
   );

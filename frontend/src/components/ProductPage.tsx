@@ -16,7 +16,7 @@ function randomBought(id) {
   return 180 + (id % 9) * 73;
 }
 
-const FEATURES = ['Envio rapido 24/48h', 'Devolucion gratis 30 dias', 'Pago seguro cifrado', 'Soporte premium'];
+const FEATURES = ['Envío rápido 24/48h', 'Devolución gratis 30 días', 'Pago seguro cifrado', 'Soporte premium'];
 
 export default function ProductPage() {
   const { id } = useParams();
@@ -91,14 +91,14 @@ export default function ProductPage() {
           />
           <div className="product-mini-badges">
             <span className="deal-chip">+{randomBought(Number(id))} vendidos</span>
-            <span className="deal-chip deal-chip--hot">4.8/5 valoracion</span>
+            <span className="deal-chip deal-chip--hot">4.8/5 valoración</span>
           </div>
         </div>
 
         <div className="product-detail__content">
           <p className="kicker">{product.category || 'Producto destacado'}</p>
           <h2>{product.name}</h2>
-          <p>{product.description || 'Sin descripcion'}</p>
+          <p>{product.description || 'Sin descripción'}</p>
 
           <div className="price-stack price-stack--big">
             <p className="old-price">{formatMoney(product.price)}</p>
@@ -106,7 +106,7 @@ export default function ProductPage() {
           </div>
 
           <div className="coupon-inline">
-            <strong>CUPON FLASH:</strong> TEMU-PLUS-15
+            <strong>CUPÓN FLASH:</strong> TEMU-PLUS-15
             <button className="btn btn--secondary" type="button">
               Copiar
             </button>
@@ -129,7 +129,7 @@ export default function ProductPage() {
 
           <div className="actions">
             <button className="btn btn--epic" onClick={addToCart} type="button">
-              Anadir al carrito
+              Añadir al carrito
             </button>
             <button className="btn btn--secondary" onClick={() => navigate('/cart')} type="button">
               Comprar ahora
@@ -150,13 +150,13 @@ export default function ProductPage() {
 
           <article className="extra-box extra-box--hot">
             <h3>Oferta activa</h3>
-            <p>Compra en los proximos 20 min y recibes 2x puntos.</p>
-            <p className="deal-chip deal-chip--hot">Promo en cuenta atras</p>
+            <p>Compra en los próximos 20 min y recibes 2x puntos.</p>
+            <p className="deal-chip deal-chip--hot">Promo en cuenta atrás</p>
           </article>
 
           <article className="extra-box">
-            <h3>Resenas destacadas</h3>
-            <p>"Muy buena calidad, envio rapido" - Lucia M.</p>
+            <h3>Reseñas destacadas</h3>
+            <p>"Muy buena calidad, envío rápido" - Lucía M.</p>
             <p>"Por ese precio es un chollo total" - Carlos R.</p>
           </article>
         </div>

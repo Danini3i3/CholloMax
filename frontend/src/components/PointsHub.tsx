@@ -5,20 +5,20 @@ import { isAuthenticated } from '../lib/session';
 
 const translate = (msg) => {
   const dict = {
-    'Invalid stake': 'Apuesta invalida.',
-    'Invalid choice': 'Seleccion invalida.',
+    'Invalid stake': 'Apuesta inválida.',
+    'Invalid choice': 'Selección inválida.',
     'Not enough points': 'No tienes puntos suficientes.',
     'User not found': 'Usuario no encontrado.',
-    'Invalid points to redeem': 'Puntos invalidos para canjear.',
+    'Invalid points to redeem': 'Puntos inválidos para canjear.',
   };
   return dict[msg] || msg || 'Ha ocurrido un error.';
 };
 
 const COUPONS = [
-  { id: 'c5', title: 'Cupon 5%', points: 100, badge: 'HOT' },
-  { id: 'c10', title: 'Cupon 10%', points: 200, badge: 'TOP' },
-  { id: 'c20', title: 'Cupon 20%', points: 400, badge: 'MEGA' },
-  { id: 'ship', title: 'Envio Gratis', points: 100, badge: 'FLASH' },
+  { id: 'c5', title: 'Cupón 5%', points: 100, badge: 'HOT' },
+  { id: 'c10', title: 'Cupón 10%', points: 200, badge: 'TOP' },
+  { id: 'c20', title: 'Cupón 20%', points: 400, badge: 'MEGA' },
+  { id: 'ship', title: 'Envío Gratis', points: 100, badge: 'FLASH' },
 ];
 
 function buildCouponCode(couponId) {
@@ -89,7 +89,7 @@ export default function PointsHub() {
 
   const claimCoupon = async (coupon) => {
     if (!profile || profile.puntos < coupon.points) {
-      setMessage('No tienes puntos suficientes para este cupon.');
+      setMessage('No tienes puntos suficientes para este cupón.');
       return;
     }
 
@@ -98,7 +98,7 @@ export default function PointsHub() {
       const code = buildCouponCode(coupon.id);
       setClaimedCoupons((prev) => [{ ...coupon, code }, ...prev].slice(0, 6));
       setProfile((prev) => ({ ...prev, puntos: prev.puntos - coupon.points }));
-      setMessage(`Cupon desbloqueado: ${code}`);
+      setMessage(`Cupón desbloqueado: ${code}`);
     } catch (error) {
       setMessage(translate(error.response?.data?.message));
     }
@@ -111,7 +111,7 @@ export default function PointsHub() {
     <section className="content-stack points-hub points-hub--temu">
       <section className="panel points-hero points-hero--temu">
         <p className="kicker">Temu style points arena</p>
-        <h2>Centro de Puntos Maximos</h2>
+        <h2>Centro de Puntos Máximos</h2>
         <p>
           Saldo actual: <strong>{profile.puntos}</strong> puntos
         </p>
@@ -126,10 +126,10 @@ export default function PointsHub() {
         <article className="panel points-card points-card--temu">
           <span className="temu-burst">x2</span>
           <h3>Ganar con juegos y gambleo</h3>
-          <p>Ruleta epica + apuesta rojo/negro para farmear puntos rapido.</p>
+          <p>Ruleta épica + apuesta rojo/negro para farmear puntos rápido.</p>
           <div className="actions">
             <Link className="btn btn--epic" to="/games">
-              Ir a seccion juegos
+              Ir a sección juegos
             </Link>
           </div>
           <form className="form gamble-form" onSubmit={gamble}>
@@ -161,7 +161,7 @@ export default function PointsHub() {
 
         <article className="panel points-card points-card--temu points-card--spend">
           <h3>Gastar puntos ahora</h3>
-          <p>Canje instantaneo para aplicar descuento de compra.</p>
+          <p>Canje instantáneo para aplicar descuento de compra.</p>
           <form className="form" onSubmit={redeem}>
             <label htmlFor="redeem-points">Puntos a gastar</label>
             <input

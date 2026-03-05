@@ -6,8 +6,8 @@ export default function GamesHub() {
     <section className="content-stack">
       <section className="panel games-hero">
         <p className="kicker">Arcade Zone</p>
-        <h2>Seccion de Juegos</h2>
-        <p>Gana puntos con minijuegos y canjealos por descuentos y cupones.</p>
+        <h2>Sección de Juegos</h2>
+        <p>Gana puntos con minijuegos y canjéalos por descuentos y cupones.</p>
       </section>
 
       <div className="games-grid">
@@ -18,8 +18,8 @@ export default function GamesHub() {
             src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80"
           />
           <span className="sale-tag">LUCK</span>
-          <h3>Ruleta Epica</h3>
-          <p>Premios instantaneos: puntos, descuentos y envio gratis.</p>
+          <h3>Ruleta Épica</h3>
+          <p>Premios instantáneos: puntos, descuentos y envío gratis.</p>
           <Link className="btn btn--epic" to="/game">
             Jugar ruleta
           </Link>
@@ -32,7 +32,7 @@ export default function GamesHub() {
             src="https://images.unsplash.com/photo-1511512578047-dfb367046420?auto=format&fit=crop&w=900&q=80"
           />
           <span className="sale-tag">SKILL</span>
-          <h3>Caida de Chollos</h3>
+          <h3>Caída de Chollos</h3>
           <p>Esquiva bombas, recoge descuentos y suma puntos por reflejos.</p>
           <Link className="btn btn--danger" to="/games/falling">
             Jugar arcade
@@ -47,7 +47,7 @@ export default function GamesHub() {
           />
           <span className="sale-tag">DISTANCE</span>
           <h3>Lanzamiento Extremo</h3>
-          <p>Lanza objetos lo mas lejos posible. Mayor distancia = mas puntos.</p>
+          <p>Lanza objetos lo más lejos posible. Mayor distancia = más puntos.</p>
           <Link className="btn btn--epic" to="/games/throw">
             Lanzar ahora
           </Link>
@@ -75,7 +75,7 @@ export default function GamesHub() {
           />
           <span className="sale-tag">BRAIN</span>
           <h3>Memory Flip</h3>
-          <p>Encuentra parejas. Menos movimientos = mas recompensa.</p>
+          <p>Encuentra parejas. Menos movimientos = más recompensa.</p>
           <Link className="btn btn--epic" to="/games/memory">
             Jugar memory
           </Link>
@@ -89,7 +89,7 @@ export default function GamesHub() {
           />
           <span className="sale-tag">SPEED</span>
           <h3>Click Frenzy</h3>
-          <p>Ronda de 12 segundos. Haz spam de clicks para sumar puntos rapidos.</p>
+          <p>Ronda de 12 segundos. Haz spam de clicks para sumar puntos rápidos.</p>
           <Link className="btn btn--danger" to="/games/click-frenzy">
             Jugar frenzy
           </Link>
@@ -103,7 +103,7 @@ export default function GamesHub() {
           />
           <span className="sale-tag">PRICE</span>
           <h3>Deal Hunter</h3>
-          <p>Adivina el precio secreto de cada ronda. Cuanto mas cerca, mejor premio.</p>
+          <p>Adivina el precio secreto de cada ronda. Cuanto más cerca, mejor premio.</p>
           <Link className="btn btn--epic" to="/games/deal-hunter">
             Cazar chollo
           </Link>
@@ -117,7 +117,7 @@ export default function GamesHub() {
           />
           <span className="sale-tag">PVP</span>
           <h3>Duel Arena</h3>
-          <p>Modo multijugador local: J1 con A y J2 con L, gana quien mas pulse.</p>
+          <p>Modo multijugador local: J1 con A y J2 con L, gana quien más pulse.</p>
           <Link className="btn btn--danger" to="/games/duel-arena">
             Jugar multi
           </Link>
@@ -131,7 +131,7 @@ export default function GamesHub() {
           />
           <span className="sale-tag">RTX</span>
           <h3>RTX Tunnel 3D</h3>
-          <p>Modo visual neon estilo raytrace. Esquiva beams y recoge boosts.</p>
+          <p>Modo visual neón estilo raytrace. Esquiva beams y recoge boosts.</p>
           <Link className="btn btn--epic" to="/games/rtx-tunnel">
             Jugar RTX
           </Link>

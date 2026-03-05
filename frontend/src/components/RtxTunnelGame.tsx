@@ -189,7 +189,7 @@ export default function RtxTunnelGame() {
 
     const earned = Math.min(300, Math.max(0, Math.floor(score * 0.9)));
     if (earned <= 0) {
-      setStatus('Necesitas mas puntuacion.');
+      setStatus('Necesitas más puntuación.');
       return;
     }
 
@@ -219,7 +219,7 @@ export default function RtxTunnelGame() {
         <div className="arcade-hud">
           <span className="pill">Tiempo: {timeLeft}s</span>
           <span className="pill">Vidas: {lives}</span>
-          <span className="pill">Puntuacion: {score}</span>
+          <span className="pill">Puntuación: {score}</span>
         </div>
 
         <div className="rtx-stage">

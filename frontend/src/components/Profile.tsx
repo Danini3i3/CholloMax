@@ -46,7 +46,7 @@ export default function Profile() {
   }
 
   if (!profile) {
-    return <p className="alert alert--error">{message || 'No se encontro el perfil'}</p>;
+    return <p className="alert alert--error">{message || 'No se encontró el perfil'}</p>;
   }
 
   return (

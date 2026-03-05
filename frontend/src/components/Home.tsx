@@ -98,11 +98,11 @@ export default function Home() {
         <h1>CholloMax</h1>
         <p>Descubre productos en tendencia, suma puntos y juega tu ruleta diaria.</p>
         <div className="hero__ticker" aria-hidden="true">
-          <span>ENVIO GRATIS</span>
+          <span>ENVÍO GRATIS</span>
           <span>DESCUENTOS EXTREMOS</span>
           <span>FLASH EVERY HOUR</span>
           <span>2x PUNTOS HOY</span>
-          <span>ENVIO GRATIS</span>
+          <span>ENVÍO GRATIS</span>
           <span>DESCUENTOS EXTREMOS</span>
         </div>
       </div>
@@ -123,7 +123,7 @@ export default function Home() {
           <Link className="btn btn--secondary" to="/cart">
             Ir al carrito
           </Link>
-          {promoActive && <span className="deal-chip deal-chip--hot">Cupon activo</span>}
+          {promoActive && <span className="deal-chip deal-chip--hot">Cupón activo</span>}
         </div>
       </section>
 
@@ -134,7 +134,7 @@ export default function Home() {
             {offers.map((offer) => (
               <article className="card card--offer" key={offer.id}>
                 <h3>{offer.title || 'Oferta especial'}</h3>
-                <p>{offer.description || 'Sin descripcion'}</p>
+                <p>{offer.description || 'Sin descripción'}</p>
                 <div className="offer-meta">
                   <span className="pill">Termina en {timeLeft(offer.fecha_fin)}</span>
                   <span className="offer-pulse">FLASH</span>
@@ -147,7 +147,7 @@ export default function Home() {
 
       <section className="panel">
         <div className="panel__header">
-          <h2>Catalogo</h2>
+          <h2>Catálogo</h2>
           <select className="select" onChange={(event) => setCategory(event.target.value)} value={category}>
             <option value="">Todas</option>
             {categories.map((item) => (
@@ -175,7 +175,7 @@ export default function Home() {
                   }
                 />
                 <h3>{product.name}</h3>
-                <p className="product-card__description">{product.description || 'Sin descripcion'}</p>
+                <p className="product-card__description">{product.description || 'Sin descripción'}</p>
                 <div className="price-stack">
                   <p className="old-price">{formatMoney(product.price)}</p>
                   <p className="price">{formatMoney(formatOfferPrice(product.price, getDiscountRate(product.id)))}</p>
@@ -190,7 +190,7 @@ export default function Home() {
                     Ver detalle
                   </Link>
                   <button className="btn" onClick={() => handleAddToCart(product.id)} type="button">
-                    Anadir
+                    Añadir
                   </button>
                 </div>
               </article>
@@ -210,7 +210,7 @@ export default function Home() {
             <p className="kicker">Sobre premium</p>
             <h3>Descuento visible antes de abrir</h3>
             <p>
-              Premio dentro: <strong>{PROMO_PERCENT}% OFF</strong> con codigo <strong>{PROMO_CODE}</strong>.
+              Premio dentro: <strong>{PROMO_PERCENT}% OFF</strong> con código <strong>{PROMO_CODE}</strong>.
             </p>
 
             <div className={`promo-envelope ${promoOpened ? 'promo-envelope--open' : ''}`}>

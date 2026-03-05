@@ -9,6 +9,7 @@ import Profile from './components/Profile';
 import Game from './components/Game';
 import PointsHub from './components/PointsHub';
 import MyOrders from './components/MyOrders';
+import OrderDetail from './components/OrderDetail';
 import GamesHub from './components/GamesHub';
 import FallingDealsGame from './components/FallingDealsGame';
 import ThrowDistanceGame from './components/ThrowDistanceGame';
@@ -71,7 +72,7 @@ function App() {
             Puntos
           </NavLink>
           <NavLink className={navClassName} to="/terms">
-            Terminos
+            Términos
           </NavLink>
           {token ? (
             <>
@@ -105,6 +106,7 @@ function App() {
           <Route path="/product/:id" element={<ProductPage />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/orders" element={<MyOrders />} />
+          <Route path="/orders/:id" element={<OrderDetail />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/game" element={<Game />} />
           <Route path="/games" element={<GamesHub />} />
@@ -125,12 +127,12 @@ function App() {
         <div className="popup-overlay popup-overlay--epic" role="dialog" aria-modal="true">
           <article className="popup-card popup-card--promo age-popup">
             <p className="kicker">Acceso restringido</p>
-            <h3>Confirmacion +18</h3>
-            <p>Debes confirmar que tienes 18 anos o mas para continuar en CholloMax.</p>
+            <h3>Confirmación +18</h3>
+            <p>Debes confirmar que tienes 18 años o más para continuar en CholloMax.</p>
             <label className="terms-check">
               <input checked={termsAccepted} onChange={(event) => setTermsAccepted(event.target.checked)} type="checkbox" />
               <span>
-                Acepto los <Link to="/terms">Terminos y Condiciones</Link>.
+                Acepto los <Link to="/terms">Términos y Condiciones</Link>.
               </span>
             </label>
             <div className="actions">

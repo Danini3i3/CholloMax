@@ -1,13 +1,14 @@
-﻿import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import api from '../lib/api';
 import { isAuthenticated } from '../lib/session';
 
-export default function ClickFrenzyGame() {
+export default function ReactionRushGame() {
   const navigate = useNavigate();
+  const [timeLeft, setTimeLeft] = useState(20);
   const [running, setRunning] = useState(false);
-  const [timeLeft, setTimeLeft] = useState(12);
-  const [clicks, setClicks] = useState(0);
+  const [targets, setTargets] = useState([]);
+  const [score, setScore] = useState(0);
   const [status, setStatus] = useState('');
   const [claimed, setClaimed] = useState(false);
 
@@ -20,24 +21,42 @@ export default function ClickFrenzyGame() {
   }, [running]);
 
   useEffect(() => {
-    if (running && timeLeft <= 0) {
+    if (!running) return undefined;
+    const spawner = window.setInterval(() => {
+      const id = Math.random().toString(36).slice(2, 9);
+      const newTarget = {
+        id,
+        x: 8 + Math.random() * 84,
+        y: 12 + Math.random() * 70,
+      };
+      setTargets((prev) => [...prev.slice(-5), newTarget]);
+    }, 500);
+    return () => window.clearInterval(spawner);
+  }, [running]);
+
+  useEffect(() => {
+    if (!running) return;
+    if (timeLeft <= 0) {
       setRunning(false);
     }
-  }, [running, timeLeft]);
+  }, [timeLeft, running]);
 
   const start = () => {
-    setRunning(true);
-    setTimeLeft(12);
-    setClicks(0);
+    setTimeLeft(20);
+    setScore(0);
     setStatus('');
+    setTargets([]);
+    setRunning(true);
     setClaimed(false);
   };
 
+  const hit = (id) => {
+    if (!running) return;
+    setTargets((prev) => prev.filter((target) => target.id !== id));
+    setScore((prev) => prev + 8);
+  };
+
   const claim = async () => {
-    if (running) {
-      setStatus('Espera a que termine la ronda.');
-      return;
-    }
     if (!isAuthenticated()) {
       navigate('/login');
       return;
@@ -46,16 +65,14 @@ export default function ClickFrenzyGame() {
       setStatus('Ya reclamaste esta ronda.');
       return;
     }
-
-    const earned = Math.min(250, Math.floor(clicks * 2.6));
+    const earned = Math.min(260, Math.floor(score * 0.9));
     if (earned <= 0) {
-      setStatus('Haz mas clicks para ganar puntos.');
+      setStatus('Necesitas más puntuación.');
       return;
     }
-
     try {
-      const { data } = await api.post('/game/runner-claim', { points: earned, gameKey: 'click_frenzy' });
-      setStatus(`Click Frenzy: +${data.earned} puntos. Saldo: ${data.newPoints}`);
+      const { data } = await api.post('/game/runner-claim', { points: earned, gameKey: 'reaction_rush' });
+      setStatus(`Ganaste ${data.earned} puntos. Nuevo saldo: ${data.newPoints}`);
       setClaimed(true);
     } catch (error) {
       setStatus(error.response?.data?.message || 'No se pudo reclamar');
@@ -66,42 +83,43 @@ export default function ClickFrenzyGame() {
     <section className="content-stack">
       <section className="panel arcade-panel">
         <div className="panel__header">
-          <h2>Click Frenzy</h2>
+          <h2>Reaction Rush</h2>
           <Link className="btn btn--secondary" to="/games">
             Volver
           </Link>
         </div>
-        <p>Haz la maxima cantidad de clicks en 12 segundos.</p>
+        <p>Revienta los objetivos lo más rápido posible.</p>
         <div className="arcade-hud">
           <span className="pill">Tiempo: {timeLeft}s</span>
-          <span className="pill">Clicks: {clicks}</span>
-          <span className="pill">Puntos estimados: {Math.min(250, Math.floor(clicks * 2.6))}</span>
+          <span className="pill">Puntuación: {score}</span>
         </div>
 
-        <div className="click-frenzy-stage">
-          <button
-            className="btn btn--xl btn--epic click-frenzy-btn"
-            disabled={!running}
-            onClick={() => setClicks((prev) => prev + 1)}
-            type="button"
-          >
-            CLICK
-          </button>
+        <div className="reaction-board">
+          {targets.map((target) => (
+            <button
+              className="reaction-target"
+              key={target.id}
+              onClick={() => hit(target.id)}
+              style={{ left: `${target.x}%`, top: `${target.y}%` }}
+              type="button"
+            >
+              TAP
+            </button>
+          ))}
         </div>
 
         <div className="actions">
           {!running ? (
             <button className="btn btn--epic" onClick={start} type="button">
-              Empezar ronda
+              Empezar
             </button>
           ) : (
-            <p className="alert">Spam de clicks activo...</p>
+            <p className="alert">Dale rápido...</p>
           )}
           <button className="btn btn--danger" disabled={running} onClick={claim} type="button">
             Reclamar puntos
           </button>
         </div>
-
         {status && <p className="alert alert--success">{status}</p>}
       </section>
     </section>

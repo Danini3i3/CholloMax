@@ -86,7 +86,7 @@ export default function MemoryFlipGame() {
             Volver
           </Link>
         </div>
-        <p>Encuentra parejas. Menos movimientos = mas puntos.</p>
+        <p>Encuentra parejas. Menos movimientos = más puntos.</p>
         <div className="arcade-hud">
           <span className="pill">Movimientos: {moves}</span>
           <span className="pill">Parejas: {matchedCount / 2}/6</span>

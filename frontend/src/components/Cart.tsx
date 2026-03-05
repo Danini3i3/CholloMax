@@ -8,14 +8,14 @@ const PROMO_PERCENT = 35;
 const CHECKOUT_STEPS = ['contact', 'shipping', 'payment'];
 
 const PAYMENT_METHODS = [
-  { value: 'card', label: 'Tarjeta', hint: 'Visa, Mastercard y debito', chip: 'FAST' },
+  { value: 'card', label: 'Tarjeta', hint: 'Visa, Mastercard y débito', chip: 'FAST' },
   { value: 'paypal', label: 'PayPal', hint: 'Pago seguro con cuenta PayPal', chip: 'SAFE' },
-  { value: 'bizum', label: 'Bizum', hint: 'Confirmacion inmediata desde movil', chip: 'MOBILE' },
-  { value: 'bank_transfer', label: 'Transferencia', hint: 'Confirmacion bancaria en 24/48h', chip: 'BANK' },
+  { value: 'bizum', label: 'Bizum', hint: 'Confirmación inmediata desde móvil', chip: 'MOBILE' },
+  { value: 'bank_transfer', label: 'Transferencia', hint: 'Confirmación bancaria en 24/48h', chip: 'BANK' },
 ];
 
 const SHIPPING_METHODS = [
-  { value: 'standard', label: 'Standard 48h', eta: 'Entrega estimada en 2 dias' },
+  { value: 'standard', label: 'Standard 48h', eta: 'Entrega estimada en 2 días' },
   { value: 'express', label: 'Express 24h', eta: 'Entrega estimada en 24 horas' },
   { value: 'pickup', label: 'Recogida en punto', eta: 'Recoge hoy en tienda asociada' },
 ];
@@ -33,21 +33,21 @@ function getValidationErrors(data) {
 
   if (!data.fullName.trim()) errors.fullName = 'Nombre y apellidos obligatorios';
   if (!data.email.trim()) errors.email = 'Email obligatorio';
-  else if (!EMAIL_REGEX.test(data.email.trim())) errors.email = 'Email no valido';
+  else if (!EMAIL_REGEX.test(data.email.trim())) errors.email = 'Email no válido';
 
-  if (!data.phone.trim()) errors.phone = 'Telefono obligatorio';
-  else if (!PHONE_REGEX.test(data.phone.trim())) errors.phone = 'Telefono no valido';
+  if (!data.phone.trim()) errors.phone = 'Teléfono obligatorio';
+  else if (!PHONE_REGEX.test(data.phone.trim())) errors.phone = 'Teléfono no válido';
 
-  if (!data.address.trim()) errors.address = 'Direccion obligatoria';
+  if (!data.address.trim()) errors.address = 'Dirección obligatoria';
   if (!data.city.trim()) errors.city = 'Ciudad obligatoria';
 
-  if (!data.postalCode.trim()) errors.postalCode = 'Codigo postal obligatorio';
-  else if (!POSTAL_REGEX.test(data.postalCode.trim())) errors.postalCode = 'Codigo postal no valido';
+  if (!data.postalCode.trim()) errors.postalCode = 'Código postal obligatorio';
+  else if (!POSTAL_REGEX.test(data.postalCode.trim())) errors.postalCode = 'Código postal no válido';
 
-  if (!data.country.trim()) errors.country = 'Pais obligatorio';
-  if (!data.shippingMethod.trim()) errors.shippingMethod = 'Selecciona un envio';
-  if (!data.paymentMethod.trim()) errors.paymentMethod = 'Selecciona un metodo de pago';
-  if (!data.acceptTerms) errors.acceptTerms = 'Debes aceptar terminos y condiciones';
+  if (!data.country.trim()) errors.country = 'País obligatorio';
+  if (!data.shippingMethod.trim()) errors.shippingMethod = 'Selecciona un envío';
+  if (!data.paymentMethod.trim()) errors.paymentMethod = 'Selecciona un método de pago';
+  if (!data.acceptTerms) errors.acceptTerms = 'Debes aceptar términos y condiciones';
 
   return errors;
 }
@@ -66,7 +66,7 @@ function isStepValid(step, errors) {
 
 function getStepLabel(step) {
   if (step === 'contact') return 'Contacto';
-  if (step === 'shipping') return 'Envio';
+  if (step === 'shipping') return 'Envío';
   return 'Pago';
 }
 
@@ -267,7 +267,7 @@ export default function Cart() {
 
       {cart.items.length === 0 ? (
         <p>
-          Tu carrito esta vacio. <Link to="/">Ver productos</Link>
+          Tu carrito está vacío. <Link to="/">Ver productos</Link>
         </p>
       ) : (
         <>
@@ -315,10 +315,10 @@ export default function Cart() {
               <h3>[Pay] Resumen de compra</h3>
               <p className="stock">Subtotal: {formatMoney(subtotal)}</p>
               <p className="stock stock--good">Descuento promo: -{formatMoney(discountAmount)}</p>
-              <p className="stock">Envio: Gratis</p>
+              <p className="stock">Envío: Gratis</p>
               <p className="checkout-total">Total final: {formatMoney(finalTotal)}</p>
-              <p className="stock">Metodo de envio: {selectedShipping.label}</p>
-              {promoActive && <p className="deal-chip deal-chip--hot">Cupon activo: {PROMO_CODE}</p>}
+              <p className="stock">Método de envío: {selectedShipping.label}</p>
+              {promoActive && <p className="deal-chip deal-chip--hot">Cupón activo: {PROMO_CODE}</p>}
               <button className="btn btn--xl" onClick={() => setCheckoutOpen(true)} type="button">
                 Finalizar checkout
               </button>
@@ -375,7 +375,7 @@ export default function Cart() {
                         {checkoutAttempted && validationErrors.email && <p className="input-error">{validationErrors.email}</p>}
                         <input
                           onChange={(event) => updateCheckoutData('phone', event.target.value)}
-                          placeholder="Telefono"
+                          placeholder="Teléfono"
                           type="tel"
                           value={checkoutData.phone}
                         />
@@ -385,10 +385,10 @@ export default function Cart() {
 
                     {currentStep === 'shipping' && (
                       <>
-                        <h4>Direccion y envio</h4>
+                        <h4>Dirección y envío</h4>
                         <input
                           onChange={(event) => updateCheckoutData('address', event.target.value)}
-                          placeholder="Direccion"
+                          placeholder="Dirección"
                           type="text"
                           value={checkoutData.address}
                         />
@@ -404,7 +404,7 @@ export default function Cart() {
                           />
                           <input
                             onChange={(event) => updateCheckoutData('postalCode', event.target.value)}
-                            placeholder="Codigo postal"
+                            placeholder="Código postal"
                             type="text"
                             value={checkoutData.postalCode}
                           />
@@ -415,7 +415,7 @@ export default function Cart() {
                         )}
                         <input
                           onChange={(event) => updateCheckoutData('country', event.target.value)}
-                          placeholder="Pais"
+                          placeholder="País"
                           type="text"
                           value={checkoutData.country}
                         />
@@ -445,8 +445,8 @@ export default function Cart() {
 
                     {currentStep === 'payment' && (
                       <>
-                        <h4>Pago y confirmacion</h4>
-                        <div className="payment-options" role="radiogroup" aria-label="Metodo de pago">
+                        <h4>Pago y confirmación</h4>
+                        <div className="payment-options" role="radiogroup" aria-label="Método de pago">
                           {PAYMENT_METHODS.map((method) => {
                             const isSelected = checkoutData.paymentMethod === method.value;
                             return (
@@ -477,7 +477,7 @@ export default function Cart() {
                             type="checkbox"
                           />
                           <span>
-                            Acepto los <Link to="/terms">Terminos y Condiciones</Link>.
+                            Acepto los <Link to="/terms">Términos y Condiciones</Link>.
                           </span>
                         </label>
                         {checkoutAttempted && validationErrors.acceptTerms && (
@@ -489,7 +489,7 @@ export default function Cart() {
                             onChange={(event) => updateCheckoutData('marketingOptIn', event.target.checked)}
                             type="checkbox"
                           />
-                          <span>Quiero recibir ofertas y codigos por email.</span>
+                          <span>Quiero recibir ofertas y códigos por email.</span>
                         </label>
                       </>
                     )}
@@ -531,7 +531,7 @@ export default function Cart() {
                       <strong>-{formatMoney(discountAmount)}</strong>
                     </p>
                     <p>
-                      <span>Envio</span>
+                      <span>Envío</span>
                       <strong>Gratis</strong>
                     </p>
                     <p className="checkout-recap__total">
@@ -560,7 +560,7 @@ export default function Cart() {
                   x
                 </button>
                 <h3>Sobre sorpresa</h3>
-                <p className="stock">Este sobre trae un cupon visible: {PROMO_PERCENT}% OFF.</p>
+                <p className="stock">Este sobre trae un cupón visible: {PROMO_PERCENT}% OFF.</p>
 
                 <div className={`promo-envelope ${promoOpened ? 'promo-envelope--open' : ''}`}>
                   <div className="promo-envelope__back" />
@@ -578,7 +578,7 @@ export default function Cart() {
                   </button>
                 ) : (
                   <div className="alert alert--success">
-                    Descuento tocho activado. Se aplica automaticamente al total del carrito.
+                    Descuento tocho activado. Se aplica automáticamente al total del carrito.
                   </div>
                 )}
               </div>

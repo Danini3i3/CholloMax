@@ -5,12 +5,12 @@ export default function TermsConditions() {
     <section className="content-stack">
       <section className="panel legal-panel">
         <div className="panel__header">
-          <h2>Terminos y Condiciones</h2>
+          <h2>Términos y Condiciones</h2>
         </div>
 
-        <p>Ultima actualizacion: 03/03/2026.</p>
+        <p>Última actualización: 03/03/2026.</p>
         <p>
-          Al usar CholloMax aceptas estas condiciones. Si no estas de acuerdo, debes dejar de usar la plataforma.
+          Al usar CholloMax aceptas estas condiciones. Si no estás de acuerdo, debes dejar de usar la plataforma.
         </p>
 
         <h3>1. Uso de la plataforma</h3>
@@ -22,13 +22,13 @@ export default function TermsConditions() {
         <h3>2. Cuenta y seguridad</h3>
         <p>
           Eres responsable de la seguridad de tu cuenta y de mantener tus credenciales protegidas. Cualquier actividad
-          con tu sesion iniciada se considera realizada por ti.
+          con tu sesión iniciada se considera realizada por ti.
         </p>
 
         <h3>3. Pedidos y pagos</h3>
         <p>
           Los pedidos se consideran confirmados al completar el checkout correctamente. Los descuentos y cupones pueden
-          tener limites, fechas de validez y condiciones concretas.
+          tener límites, fechas de validez y condiciones concretas.
         </p>
 
         <h3>4. Juegos y puntos</h3>
@@ -37,15 +37,15 @@ export default function TermsConditions() {
           limites o bloquear intentos de abuso.
         </p>
 
-        <h3>5. Edad minima</h3>
+        <h3>5. Edad mínima</h3>
         <p>
-          Debes tener al menos 18 anos para usar la plataforma. Al continuar confirmas que cumples este requisito.
+          Debes tener al menos 18 años para usar la plataforma. Al continuar confirmas que cumples este requisito.
         </p>
 
         <h3>6. Cambios</h3>
         <p>
-          CholloMax puede actualizar estos terminos en cualquier momento. La version vigente sera la publicada en esta
-          pagina.
+          CholloMax puede actualizar estos términos en cualquier momento. La versión vigente será la publicada en esta
+          página.
         </p>
       </section>
     </section>

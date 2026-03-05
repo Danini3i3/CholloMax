@@ -18,15 +18,15 @@ function prizeText(prize) {
   if (!prize) return '';
   if (prize.type === 'points') return `Has ganado ${prize.amount} puntos`;
   if (prize.type === 'discount') return `Has ganado ${prize.amount}% de descuento`;
-  if (prize.type === 'shipping') return 'Has ganado envio gratis';
+  if (prize.type === 'shipping') return 'Has ganado envío gratis';
   return 'Sin premio esta vez';
 }
 
 function translateApiMessage(msg) {
   const dictionary = {
     'Already played in last 24h': 'Ya jugaste recientemente.',
-    'Not authorized, token missing': 'Falta iniciar sesion.',
-    'Token invalid or expired': 'La sesion ha caducado. Vuelve a iniciar sesion.',
+    'Not authorized, token missing': 'Falta iniciar sesión.',
+    'Token invalid or expired': 'La sesión ha caducado. Vuelve a iniciar sesión.',
     'User not found': 'Usuario no encontrado.',
   };
   return dictionary[msg] || msg || 'No se pudo jugar';
@@ -102,8 +102,8 @@ export default function Game() {
   return (
     <section className="panel game-panel game-panel--epic">
       <p className="kicker">Modo festival</p>
-      <h2>Ruleta Epica de CholloMax</h2>
-      <p className="game-subtitle">Luces, premios y giro brutal. Cuanto mas gires, mas adrenalina.</p>
+      <h2>Ruleta Épica de CholloMax</h2>
+      <p className="game-subtitle">Luces, premios y giro brutal. Cuanto más gires, más adrenalina.</p>
 
       <div className="wheel-stage">
         <div className={`wheel-pointer${spinning ? ' wheel-pointer--live' : ''}`} />
@@ -143,7 +143,7 @@ export default function Game() {
       </div>
 
       <button className={`btn btn--xl btn--epic${spinning ? ' is-spinning' : ''}`} disabled={spinning} onClick={spin} type="button">
-        {spinning ? 'Girando al maximo...' : 'Girar ruleta epica'}
+        {spinning ? 'Girando al máximo...' : 'Girar ruleta épica'}
       </button>
 
       {result && <p className="alert alert--success alert--epic">{prizeText(result)}</p>}
@@ -156,7 +156,7 @@ export default function Game() {
               x
             </button>
             <p className="kicker">Resultado</p>
-            <h3>{result.type === 'none' ? 'Sigue intentandolo' : 'Premio desbloqueado'}</h3>
+            <h3>{result.type === 'none' ? 'Sigue intentándolo' : 'Premio desbloqueado'}</h3>
             <p>{prizeText(result)}</p>
             <button className="btn btn--xl btn--epic" onClick={() => setShowPrizePopup(false)} type="button">
               Cerrar

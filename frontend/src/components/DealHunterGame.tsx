@@ -82,7 +82,7 @@ export default function DealHunterGame() {
             Volver
           </Link>
         </div>
-        <p>Adivina el precio objetivo del chollo. Cuanto mas cerca, mas puntos.</p>
+        <p>Adivina el precio objetivo del chollo. Cuanto más cerca, más puntos.</p>
 
         <div className="arcade-hud">
           <span className="pill">Ronda: {round}/{maxRounds}</span>

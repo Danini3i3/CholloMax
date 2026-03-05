@@ -66,7 +66,7 @@ export default function DuelArenaGame() {
       return;
     }
     if (reward <= 0) {
-      setStatus('Sin puntuacion suficiente para reclamar.');
+      setStatus('Sin puntuación suficiente para reclamar.');
       return;
     }
 
@@ -91,7 +91,7 @@ export default function DuelArenaGame() {
             Volver
           </Link>
         </div>
-        <p>Jugador 1 pulsa A. Jugador 2 pulsa L. Teneis 18 segundos.</p>
+        <p>Jugador 1 pulsa A. Jugador 2 pulsa L. Tenéis 18 segundos.</p>
 
         <div className="arcade-hud">
           <span className="pill">Tiempo: {timeLeft}s</span>

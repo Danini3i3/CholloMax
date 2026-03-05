@@ -44,7 +44,7 @@ export default function Register() {
           value={email}
         />
 
-        <label htmlFor="password">Contrasena</label>
+        <label htmlFor="password">Contraseña</label>
         <input
           id="password"
           minLength={6}
@@ -62,7 +62,7 @@ export default function Register() {
       {error && <p className="alert alert--error">{error}</p>}
 
       <p>
-        Ya tienes cuenta? <Link to="/login">Inicia sesion</Link>
+        ¿Ya tienes cuenta? <Link to="/login">Inicia sesión</Link>
       </p>
     </section>
   );

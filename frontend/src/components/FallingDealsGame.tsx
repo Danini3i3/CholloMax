@@ -128,7 +128,7 @@ export default function FallingDealsGame() {
     <section className="content-stack">
       <section className="panel arcade-panel">
         <div className="panel__header">
-          <h2>Caida de Chollos</h2>
+          <h2>Caída de Chollos</h2>
           <Link className="btn btn--secondary" to="/games">
             Volver a juegos
           </Link>
@@ -138,7 +138,7 @@ export default function FallingDealsGame() {
         <div className="arcade-hud">
           <span className="pill">Tiempo: {Math.ceil(timeLeft)}s</span>
           <span className="pill">Vidas: {lives}</span>
-          <span className="pill">Puntuacion: {score}</span>
+          <span className="pill">Puntuación: {score}</span>
         </div>
 
         <div className="falling-board">
@@ -156,7 +156,7 @@ export default function FallingDealsGame() {
               key={item.id}
               style={{ left: `${item.lane * 20 + 10}%`, top: `${item.y}%` }}
             >
-              {item.type === 'bomb' ? 'BOMB' : item.type === 'coupon' ? 'CUPON' : 'OFF'}
+              {item.type === 'bomb' ? 'BOMB' : item.type === 'coupon' ? 'CUPÓN' : 'OFF'}
             </div>
           ))}
         </div>
@@ -184,7 +184,7 @@ export default function FallingDealsGame() {
             </button>
             {!isAuthenticated() && (
               <button className="btn btn--danger" onClick={() => navigate('/login')} type="button">
-                Inicia sesion para ganar puntos
+                Inicia sesión para ganar puntos
               </button>
             )}
           </div>
