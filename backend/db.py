@@ -2,6 +2,8 @@ import sqlite3
 import os
 from pathlib import Path
 
+from werkzeug.security import generate_password_hash
+
 if os.getenv("VERCEL"):
     DB_PATH = Path("/tmp/chollomax.db")
 else:
@@ -26,6 +28,7 @@ def init_db():
           name TEXT NOT NULL,
           email TEXT NOT NULL UNIQUE,
           password TEXT NOT NULL,
+          role TEXT NOT NULL DEFAULT 'customer',
           puntos INTEGER NOT NULL DEFAULT 0,
           fecha_registro TEXT NOT NULL
         );
@@ -87,11 +90,20 @@ def init_db():
         """
     )
 
+    ensure_column(cur, "users", "role", "TEXT NOT NULL DEFAULT 'customer'")
     seed_products(cur)
     seed_flash_offers(cur)
+    seed_admin_user(cur)
 
     conn.commit()
     conn.close()
+
+
+def ensure_column(cur, table, column, definition):
+    columns = {row["name"] for row in cur.execute(f"PRAGMA table_info({table})").fetchall()}
+    if column in columns:
+        return
+    cur.execute(f"ALTER TABLE {table} ADD COLUMN {column} {definition}")
 
 
 def seed_products(cur):
@@ -179,4 +191,25 @@ def seed_flash_offers(cur):
         VALUES (?, ?, ?, ?, ?)
         """,
         offers,
+    )
+
+
+def seed_admin_user(cur):
+    admin_email = "admin@chollomax.com"
+    existing = cur.execute("SELECT id FROM users WHERE email = ?", (admin_email,)).fetchone()
+    if existing:
+        cur.execute("UPDATE users SET role = 'admin' WHERE email = ?", (admin_email,))
+        return
+
+    cur.execute(
+        """
+        INSERT INTO users (name, email, password, role, puntos, fecha_registro)
+        VALUES (?, ?, ?, 'admin', 0, ?)
+        """,
+        (
+            "Administrador CholloMax",
+            admin_email,
+            generate_password_hash("Admin123!"),
+            "2026-03-06 00:00:00",
+        ),
     )

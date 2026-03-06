@@ -69,8 +69,15 @@ def decode_token(token):
 
 
 def issue_token(user_id):
+    conn = get_connection()
+    user = conn.execute("SELECT id, role FROM users WHERE id = ?", (user_id,)).fetchone()
+    conn.close()
+    if not user:
+        raise ValueError("User not found")
+
     payload = {
-        "id": user_id,
+        "id": user["id"],
+        "role": user["role"],
         "exp": datetime.now(timezone.utc) + timedelta(days=7),
     }
     return jwt.encode(payload, JWT_SECRET, algorithm="HS256")
@@ -91,7 +98,7 @@ def auth_required(handler):
 
         conn = get_connection()
         user = conn.execute(
-            "SELECT id, name, email, puntos, fecha_registro FROM users WHERE id = ?",
+            "SELECT id, name, email, role, puntos, fecha_registro FROM users WHERE id = ?",
             (data["id"],),
         ).fetchone()
         conn.close()
@@ -100,6 +107,17 @@ def auth_required(handler):
             return jsonify({"message": "User not found"}), 401
 
         g.user = dict(user)
+        return handler(*args, **kwargs)
+
+    return wrapper
+
+
+def admin_required(handler):
+    @auth_required
+    @wraps(handler)
+    def wrapper(*args, **kwargs):
+        if g.user.get("role") != "admin":
+            return jsonify({"message": "Admin access required"}), 403
         return handler(*args, **kwargs)
 
     return wrapper
@@ -473,6 +491,414 @@ def my_orders():
 @auth_required
 def profile():
     return jsonify(g.user)
+
+
+def parse_product_payload(body):
+    name = str(body.get("name", "")).strip()
+    description = str(body.get("description", "")).strip()
+    category = str(body.get("category", "")).strip()
+    image_url = str(body.get("image_url", "")).strip()
+
+    try:
+        price = float(body.get("price", 0))
+        stock = int(body.get("stock", 0))
+    except (TypeError, ValueError):
+        return None, "Invalid price or stock"
+
+    if not name:
+        return None, "Product name is required"
+    if price < 0:
+        return None, "Price cannot be negative"
+    if stock < 0:
+        return None, "Stock cannot be negative"
+
+    return {
+        "name": name,
+        "description": description,
+        "price": round(price, 2),
+        "stock": stock,
+        "category": category,
+        "image_url": image_url,
+    }, None
+
+
+def parse_flash_offer_payload(body):
+    title = str(body.get("title", "")).strip()
+    description = str(body.get("description", "")).strip()
+    fecha_inicio = str(body.get("fecha_inicio", "")).strip()
+    fecha_fin = str(body.get("fecha_fin", "")).strip()
+    active = 1 if body.get("active", True) else 0
+
+    if not title:
+        return None, "Offer title is required"
+    if not fecha_inicio or not fecha_fin:
+        return None, "Offer start and end dates are required"
+
+    return {
+        "title": title,
+        "description": description,
+        "fecha_inicio": fecha_inicio,
+        "fecha_fin": fecha_fin,
+        "active": active,
+    }, None
+
+
+@app.get("/api/admin/overview")
+@admin_required
+def admin_overview():
+    conn = get_connection()
+    stats = {
+        "products": conn.execute("SELECT COUNT(*) AS total FROM products").fetchone()["total"],
+        "orders": conn.execute("SELECT COUNT(*) AS total FROM orders").fetchone()["total"],
+        "users": conn.execute("SELECT COUNT(*) AS total FROM users").fetchone()["total"],
+        "admins": conn.execute("SELECT COUNT(*) AS total FROM users WHERE role = 'admin'").fetchone()["total"],
+        "revenue": conn.execute("SELECT COALESCE(SUM(total), 0) AS total FROM orders").fetchone()["total"],
+        "pendingOrders": conn.execute(
+            "SELECT COUNT(*) AS total FROM orders WHERE estado NOT IN ('delivered', 'cancelled')"
+        ).fetchone()["total"],
+    }
+    recent_orders = conn.execute(
+        """
+        SELECT o.id, o.total, o.fecha, o.estado, u.name AS customer_name, u.email AS customer_email
+        FROM orders o
+        JOIN users u ON u.id = o.user_id
+        ORDER BY o.id DESC
+        LIMIT 5
+        """
+    ).fetchall()
+    low_stock = conn.execute(
+        """
+        SELECT id, name, stock, category
+        FROM products
+        WHERE stock <= 5
+        ORDER BY stock ASC, id DESC
+        LIMIT 6
+        """
+    ).fetchall()
+    conn.close()
+
+    return jsonify(
+        {
+            "stats": stats,
+            "recentOrders": [dict(row) for row in recent_orders],
+            "lowStockProducts": [dict(row) for row in low_stock],
+        }
+    )
+
+
+@app.get("/api/admin/products")
+@admin_required
+def admin_products():
+    conn = get_connection()
+    rows = conn.execute("SELECT * FROM products ORDER BY id DESC").fetchall()
+    conn.close()
+    return jsonify([dict(row) for row in rows])
+
+
+@app.post("/api/admin/products")
+@admin_required
+def admin_create_product():
+    payload, error = parse_product_payload(request.get_json(silent=True) or {})
+    if error:
+        return jsonify({"message": error}), 422
+
+    conn = get_connection()
+    cur = conn.execute(
+        """
+        INSERT INTO products (name, description, price, stock, category, image_url)
+        VALUES (?, ?, ?, ?, ?, ?)
+        """,
+        (
+            payload["name"],
+            payload["description"],
+            payload["price"],
+            payload["stock"],
+            payload["category"],
+            payload["image_url"],
+        ),
+    )
+    conn.commit()
+    row = conn.execute("SELECT * FROM products WHERE id = ?", (cur.lastrowid,)).fetchone()
+    conn.close()
+    return jsonify(dict(row)), 201
+
+
+@app.put("/api/admin/products/<int:product_id>")
+@admin_required
+def admin_update_product(product_id):
+    payload, error = parse_product_payload(request.get_json(silent=True) or {})
+    if error:
+        return jsonify({"message": error}), 422
+
+    conn = get_connection()
+    existing = conn.execute("SELECT id FROM products WHERE id = ?", (product_id,)).fetchone()
+    if not existing:
+        conn.close()
+        return jsonify({"message": "Product not found"}), 404
+
+    conn.execute(
+        """
+        UPDATE products
+        SET name = ?, description = ?, price = ?, stock = ?, category = ?, image_url = ?
+        WHERE id = ?
+        """,
+        (
+            payload["name"],
+            payload["description"],
+            payload["price"],
+            payload["stock"],
+            payload["category"],
+            payload["image_url"],
+            product_id,
+        ),
+    )
+    conn.commit()
+    row = conn.execute("SELECT * FROM products WHERE id = ?", (product_id,)).fetchone()
+    conn.close()
+    return jsonify(dict(row))
+
+
+@app.delete("/api/admin/products/<int:product_id>")
+@admin_required
+def admin_delete_product(product_id):
+    conn = get_connection()
+    product = conn.execute("SELECT id FROM products WHERE id = ?", (product_id,)).fetchone()
+    if not product:
+        conn.close()
+        return jsonify({"message": "Product not found"}), 404
+
+    has_orders = conn.execute(
+        "SELECT 1 FROM order_items WHERE product_id = ? LIMIT 1", (product_id,)
+    ).fetchone()
+    if has_orders:
+        conn.close()
+        return jsonify({"message": "Cannot delete a product with associated orders"}), 400
+
+    conn.execute("DELETE FROM products WHERE id = ?", (product_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Product deleted"})
+
+
+@app.get("/api/admin/orders")
+@admin_required
+def admin_orders():
+    conn = get_connection()
+    orders = conn.execute(
+        """
+        SELECT o.id, o.total, o.fecha, o.estado, u.id AS user_id, u.name AS customer_name, u.email AS customer_email
+        FROM orders o
+        JOIN users u ON u.id = o.user_id
+        ORDER BY o.id DESC
+        """
+    ).fetchall()
+
+    result = []
+    for order in orders:
+        items = conn.execute(
+            """
+            SELECT oi.product_id, oi.quantity, oi.price, p.name AS product_name
+            FROM order_items oi
+            LEFT JOIN products p ON p.id = oi.product_id
+            WHERE oi.order_id = ?
+            """,
+            (order["id"],),
+        ).fetchall()
+        result.append({**dict(order), "items": [dict(item) for item in items]})
+
+    conn.close()
+    return jsonify(result)
+
+
+@app.patch("/api/admin/orders/<int:order_id>")
+@admin_required
+def admin_update_order(order_id):
+    estado = str((request.get_json(silent=True) or {}).get("estado", "")).strip().lower()
+    allowed = {"paid", "processing", "shipped", "delivered", "cancelled"}
+    if estado not in allowed:
+        return jsonify({"message": "Invalid order status"}), 422
+
+    conn = get_connection()
+    existing = conn.execute("SELECT id FROM orders WHERE id = ?", (order_id,)).fetchone()
+    if not existing:
+        conn.close()
+        return jsonify({"message": "Order not found"}), 404
+
+    conn.execute("UPDATE orders SET estado = ? WHERE id = ?", (estado, order_id))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Order updated"})
+
+
+@app.get("/api/admin/users")
+@admin_required
+def admin_users():
+    conn = get_connection()
+    rows = conn.execute(
+        """
+        SELECT
+          u.id,
+          u.name,
+          u.email,
+          u.role,
+          u.puntos,
+          u.fecha_registro,
+          COUNT(DISTINCT o.id) AS orders_count,
+          COALESCE(SUM(o.total), 0) AS total_spent
+        FROM users u
+        LEFT JOIN orders o ON o.user_id = u.id
+        GROUP BY u.id
+        ORDER BY u.id DESC
+        """
+    ).fetchall()
+    conn.close()
+    return jsonify([dict(row) for row in rows])
+
+
+@app.patch("/api/admin/users/<int:user_id>")
+@admin_required
+def admin_update_user(user_id):
+    body = request.get_json(silent=True) or {}
+    name = str(body.get("name", "")).strip()
+    email = str(body.get("email", "")).strip().lower()
+    role = str(body.get("role", "customer")).strip().lower()
+    try:
+        puntos = int(body.get("puntos", 0))
+    except (TypeError, ValueError):
+        return jsonify({"message": "Invalid points"}), 422
+
+    if not name or not email:
+        return jsonify({"message": "Name and email are required"}), 422
+    if role not in {"customer", "admin"}:
+        return jsonify({"message": "Invalid role"}), 422
+
+    conn = get_connection()
+    existing = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not existing:
+        conn.close()
+        return jsonify({"message": "User not found"}), 404
+
+    duplicate = conn.execute(
+        "SELECT id FROM users WHERE email = ? AND id != ?", (email, user_id)
+    ).fetchone()
+    if duplicate:
+        conn.close()
+        return jsonify({"message": "Email already in use"}), 400
+
+    conn.execute(
+        "UPDATE users SET name = ?, email = ?, role = ?, puntos = ? WHERE id = ?",
+        (name, email, role, puntos, user_id),
+    )
+    conn.commit()
+    row = conn.execute(
+        "SELECT id, name, email, role, puntos, fecha_registro FROM users WHERE id = ?",
+        (user_id,),
+    ).fetchone()
+    conn.close()
+    return jsonify(dict(row))
+
+
+@app.delete("/api/admin/users/<int:user_id>")
+@admin_required
+def admin_delete_user(user_id):
+    if user_id == g.user["id"]:
+        return jsonify({"message": "You cannot delete your own account"}), 400
+
+    conn = get_connection()
+    existing = conn.execute("SELECT id FROM users WHERE id = ?", (user_id,)).fetchone()
+    if not existing:
+        conn.close()
+        return jsonify({"message": "User not found"}), 404
+
+    conn.execute("DELETE FROM users WHERE id = ?", (user_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "User deleted"})
+
+
+@app.get("/api/admin/flash")
+@admin_required
+def admin_flash_list():
+    conn = get_connection()
+    rows = conn.execute("SELECT * FROM ofertas_flash ORDER BY id DESC").fetchall()
+    conn.close()
+    return jsonify([dict(row) for row in rows])
+
+
+@app.post("/api/admin/flash")
+@admin_required
+def admin_flash_create():
+    payload, error = parse_flash_offer_payload(request.get_json(silent=True) or {})
+    if error:
+        return jsonify({"message": error}), 422
+
+    conn = get_connection()
+    cur = conn.execute(
+        """
+        INSERT INTO ofertas_flash (title, description, fecha_inicio, fecha_fin, active)
+        VALUES (?, ?, ?, ?, ?)
+        """,
+        (
+            payload["title"],
+            payload["description"],
+            payload["fecha_inicio"],
+            payload["fecha_fin"],
+            payload["active"],
+        ),
+    )
+    conn.commit()
+    row = conn.execute("SELECT * FROM ofertas_flash WHERE id = ?", (cur.lastrowid,)).fetchone()
+    conn.close()
+    return jsonify(dict(row)), 201
+
+
+@app.put("/api/admin/flash/<int:offer_id>")
+@admin_required
+def admin_flash_update(offer_id):
+    payload, error = parse_flash_offer_payload(request.get_json(silent=True) or {})
+    if error:
+        return jsonify({"message": error}), 422
+
+    conn = get_connection()
+    existing = conn.execute("SELECT id FROM ofertas_flash WHERE id = ?", (offer_id,)).fetchone()
+    if not existing:
+        conn.close()
+        return jsonify({"message": "Offer not found"}), 404
+
+    conn.execute(
+        """
+        UPDATE ofertas_flash
+        SET title = ?, description = ?, fecha_inicio = ?, fecha_fin = ?, active = ?
+        WHERE id = ?
+        """,
+        (
+            payload["title"],
+            payload["description"],
+            payload["fecha_inicio"],
+            payload["fecha_fin"],
+            payload["active"],
+            offer_id,
+        ),
+    )
+    conn.commit()
+    row = conn.execute("SELECT * FROM ofertas_flash WHERE id = ?", (offer_id,)).fetchone()
+    conn.close()
+    return jsonify(dict(row))
+
+
+@app.delete("/api/admin/flash/<int:offer_id>")
+@admin_required
+def admin_flash_delete(offer_id):
+    conn = get_connection()
+    existing = conn.execute("SELECT id FROM ofertas_flash WHERE id = ?", (offer_id,)).fetchone()
+    if not existing:
+        conn.close()
+        return jsonify({"message": "Offer not found"}), 404
+
+    conn.execute("DELETE FROM ofertas_flash WHERE id = ?", (offer_id,))
+    conn.commit()
+    conn.close()
+    return jsonify({"message": "Offer deleted"})
 
 
 @app.post("/api/user/redeem")

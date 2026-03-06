@@ -8,3 +8,5 @@ venv/
 instance/
 chollomax.db
 node_modules/
+.vercel
+.env*.local

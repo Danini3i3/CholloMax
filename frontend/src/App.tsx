@@ -20,7 +20,8 @@ import DealHunterGame from './components/DealHunterGame';
 import DuelArenaGame from './components/DuelArenaGame';
 import RtxTunnelGame from './components/RtxTunnelGame';
 import TermsConditions from './components/TermsConditions';
-import { clearToken, getToken } from './lib/session';
+import AdminPanel from './components/AdminPanel';
+import { clearToken, getToken, isAdmin } from './lib/session';
 
 const navClassName = ({ isActive }) => `top-nav__link${isActive ? ' top-nav__link--active' : ''}`;
 
@@ -29,6 +30,7 @@ function App() {
   const [ageGateOpen, setAgeGateOpen] = useState(() => window.localStorage.getItem('age_confirmed_18') !== '1');
   const [termsAccepted, setTermsAccepted] = useState(false);
   const navigate = useNavigate();
+  const adminVisible = token && isAdmin();
 
   useEffect(() => {
     const syncAuth = () => setToken(getToken());
@@ -74,6 +76,11 @@ function App() {
           <NavLink className={navClassName} to="/terms">
             Términos
           </NavLink>
+          {adminVisible && (
+            <NavLink className={navClassName} to="/admin">
+              Admin
+            </NavLink>
+          )}
           {token ? (
             <>
               <NavLink className={navClassName} to="/orders">
@@ -121,6 +128,7 @@ function App() {
           <Route path="/games/rtx-tunnel" element={<RtxTunnelGame />} />
           <Route path="/points" element={<PointsHub />} />
           <Route path="/terms" element={<TermsConditions />} />
+          <Route path="/admin" element={<AdminPanel />} />
         </Routes>
       </main>
 

@@ -5,6 +5,7 @@ CREATE TABLE IF NOT EXISTS users (
   name TEXT NOT NULL,
   email TEXT NOT NULL UNIQUE,
   password TEXT NOT NULL,
+  role TEXT NOT NULL DEFAULT 'customer',
   puntos INTEGER NOT NULL DEFAULT 0,
   fecha_registro TEXT NOT NULL
 );
