@@ -1595,6 +1595,17 @@ textarea {
   border-color: rgba(255, 208, 125, 0.44);
 }
 
+.admin-charts {
+  display: grid;
+  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+}
+
+.admin-charts h2 {
+  font-size: 1rem;
+  margin-bottom: 16px;
+}
+
 .admin-tabs {
   display: flex;
   flex-wrap: wrap;

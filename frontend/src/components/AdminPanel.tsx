@@ -1,7 +1,21 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Legend,
+  Pie,
+  PieChart,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from 'recharts';
 import api from '../lib/api';
 import { isAdmin, isAuthenticated } from '../lib/session';
+
+const CHART_COLORS = ['#ff5d2e', '#17c9a3', '#a78bfa', '#fbbf24', '#60a5fa', '#f472b6'];
 
 const defaultProduct = {
   name: '',
@@ -254,34 +268,112 @@ export default function AdminPanel() {
         ))}
       </nav>
 
-      {tab === 'overview' && overview && (
-        <section className="grid admin-stats">
-          <article className="card admin-stat">
-            <span>Facturación</span>
-            <strong>{formatMoney(overview.stats.revenue)}</strong>
-          </article>
-          <article className="card admin-stat">
-            <span>Productos</span>
-            <strong>{overview.stats.products}</strong>
-          </article>
-          <article className="card admin-stat">
-            <span>Pedidos</span>
-            <strong>{overview.stats.orders}</strong>
-          </article>
-          <article className="card admin-stat">
-            <span>Pedidos activos</span>
-            <strong>{overview.stats.pendingOrders}</strong>
-          </article>
-          <article className="card admin-stat">
-            <span>Usuarios</span>
-            <strong>{overview.stats.users}</strong>
-          </article>
-          <article className="card admin-stat">
-            <span>Admins</span>
-            <strong>{overview.stats.admins}</strong>
-          </article>
-        </section>
-      )}
+      {tab === 'overview' && overview && (() => {
+        const ordersByStatus = ['paid', 'processing', 'shipped', 'delivered', 'cancelled'].map((s, i) => ({
+          name: s,
+          value: orders.filter((o: any) => o.estado === s).length,
+          fill: CHART_COLORS[i % CHART_COLORS.length],
+        })).filter((d) => d.value > 0);
+
+        const stockByCategory: Record<string, number> = {};
+        for (const p of products as any[]) {
+          const cat = p.category || 'Sin categoría';
+          stockByCategory[cat] = (stockByCategory[cat] || 0) + p.stock;
+        }
+        const stockData = Object.entries(stockByCategory).map(([name, stock]) => ({ name, stock }));
+
+        const recentOrdersData = [...overview.recentOrders].reverse().map((o: any) => ({
+          name: `#${o.id}`,
+          total: o.total,
+        }));
+
+        return (
+          <>
+            <section className="grid admin-stats">
+              <article className="card admin-stat">
+                <span>Facturación</span>
+                <strong>{formatMoney(overview.stats.revenue)}</strong>
+              </article>
+              <article className="card admin-stat">
+                <span>Productos</span>
+                <strong>{overview.stats.products}</strong>
+              </article>
+              <article className="card admin-stat">
+                <span>Pedidos</span>
+                <strong>{overview.stats.orders}</strong>
+              </article>
+              <article className="card admin-stat">
+                <span>Pedidos activos</span>
+                <strong>{overview.stats.pendingOrders}</strong>
+              </article>
+              <article className="card admin-stat">
+                <span>Usuarios</span>
+                <strong>{overview.stats.users}</strong>
+              </article>
+              <article className="card admin-stat">
+                <span>Admins</span>
+                <strong>{overview.stats.admins}</strong>
+              </article>
+            </section>
+
+            <section className="admin-charts">
+              {recentOrdersData.length > 0 && (
+                <div className="panel admin-section">
+                  <h2>Últimos pedidos — importe</h2>
+                  <ResponsiveContainer height={220} width="100%">
+                    <BarChart data={recentOrdersData}>
+                      <CartesianGrid stroke="rgba(255,255,255,0.07)" strokeDasharray="3 3" />
+                      <XAxis dataKey="name" stroke="#98a7bf" tick={{ fill: '#98a7bf', fontSize: 12 }} />
+                      <YAxis stroke="#98a7bf" tick={{ fill: '#98a7bf', fontSize: 12 }} tickFormatter={(v) => `${v}€`} />
+                      <Tooltip
+                        contentStyle={{ background: '#16233d', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10 }}
+                        formatter={(v: number) => [formatMoney(v), 'Total']}
+                        labelStyle={{ color: '#f3f7ff' }}
+                      />
+                      <Bar dataKey="total" fill="#ff5d2e" radius={[6, 6, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {ordersByStatus.length > 0 && (
+                <div className="panel admin-section">
+                  <h2>Pedidos por estado</h2>
+                  <ResponsiveContainer height={220} width="100%">
+                    <PieChart>
+                      <Pie cx="50%" cy="50%" data={ordersByStatus} dataKey="value" innerRadius={55} nameKey="name" outerRadius={90} />
+                      <Tooltip
+                        contentStyle={{ background: '#16233d', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10 }}
+                        labelStyle={{ color: '#f3f7ff' }}
+                      />
+                      <Legend formatter={(v) => <span style={{ color: '#98a7bf', fontSize: 12 }}>{v}</span>} />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+
+              {stockData.length > 0 && (
+                <div className="panel admin-section">
+                  <h2>Stock por categoría</h2>
+                  <ResponsiveContainer height={220} width="100%">
+                    <BarChart data={stockData} layout="vertical">
+                      <CartesianGrid stroke="rgba(255,255,255,0.07)" strokeDasharray="3 3" />
+                      <XAxis stroke="#98a7bf" tick={{ fill: '#98a7bf', fontSize: 12 }} type="number" />
+                      <YAxis dataKey="name" stroke="#98a7bf" tick={{ fill: '#98a7bf', fontSize: 12 }} type="category" width={100} />
+                      <Tooltip
+                        contentStyle={{ background: '#16233d', border: '1px solid rgba(255,255,255,0.12)', borderRadius: 10 }}
+                        formatter={(v: number) => [v, 'Unidades']}
+                        labelStyle={{ color: '#f3f7ff' }}
+                      />
+                      <Bar dataKey="stock" fill="#17c9a3" radius={[0, 6, 6, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              )}
+            </section>
+          </>
+        );
+      })()}
 
       {tab === 'products' && (
         <>
